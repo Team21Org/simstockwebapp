@@ -30,7 +30,7 @@ export default function CreateStock() {
       setStock(data);
     } catch (err) {
       console.error("Error fetching stock data:", err);
-      setError("Error fetching stock data");
+      throw new Error("Error fetching stock data");
     }
   };
 
