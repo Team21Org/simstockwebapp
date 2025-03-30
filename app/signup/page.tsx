@@ -14,7 +14,15 @@ export default function SignUp() {
   const [username, setUsername] = useState("");
   const [accesslevel, setAccessLevel] = useState(""); // Access level field
 
-  const [users, setUsers] = useState([]); // State to hold user data
+  interface User {
+    id?: number;
+    email: string;
+    fullname: string;
+    pword: string;
+    username: string;
+  }
+
+  const [users, setUsers] = useState<User[]>([]); // State to hold user data
   // const [error, setError] = useState(""); // State to hold error messages
 
   // Fetch the data when the component mounts
@@ -28,7 +36,7 @@ export default function SignUp() {
       setUsers(data);
     } catch (err) {
       console.error("Error fetching user data:", err);
-      setError("Error fetching user data");
+      throw new Error("Error fetching user data");
     }
   };
 
@@ -37,7 +45,7 @@ export default function SignUp() {
   }, []);
 
   // Function to handle form submission for adding items
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -115,7 +123,7 @@ export default function SignUp() {
           {/* Display the fetched data */}
           <div>
             <h2>User List</h2>
-            <table border="1" cellPadding="8">
+            <table border={1} cellPadding={8}>
               <thead>
                 <tr>
                   <th>ID#</th>
