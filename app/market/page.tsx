@@ -16,7 +16,15 @@ export default function CreateStock() {
   // const [pricelow, setPriceLow] = useState('');
   // const [currentprice, setCurrentPrice] = useState('');
 
-  const [stock, setStock] = useState([]); // State to hold user data
+  interface Stock {
+    id?: number;
+    stockticker: string;
+    companyname: string;
+    dailyvolume: string;
+    openprice: string;
+  }
+
+  const [stock, setStock] = useState<Stock[]>([]); // State to hold user data
   // const [error, setError] = useState(""); // State to hold error messages
 
   // Fetch the data when the component mounts
@@ -39,7 +47,7 @@ export default function CreateStock() {
   }, []);
 
   // Function to handle form submission for adding items
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const currentprice = openprice;
@@ -67,9 +75,9 @@ export default function CreateStock() {
         setCompanyName("");
         setDailyVolume("");
         setOpenPrice("");
-        setPriceHigh("");
-        setPriceLow("");
-        setCurrentPrice("");
+        // setPriceHigh("");
+        // setPriceLow("");
+        // setCurrentPrice("");
       } else {
         console.error("Failed to add item");
       }
@@ -99,7 +107,7 @@ export default function CreateStock() {
                 // Ensure it's less than or equal to 4 characters
                 setStockTicker(value);
               } else {
-                setError("Stock Ticker must be 4 characters or less");
+                throw new Error("Stock Ticker must be 4 characters or less");
               }
             }}
             className="border p-2 mb-2 w-full"
@@ -117,11 +125,11 @@ export default function CreateStock() {
             value={dailyvolume}
             onChange={(e) => {
               const value = e.target.value;
-              if (value >= 0 && Number.isInteger(Number(value))) {
+              if (Number(value) >= 0 && Number.isInteger(Number(value))) {
                 // Ensure it's a positive integer
                 setDailyVolume(value);
               } else {
-                setError("Daily Volume must be a positive integer");
+                throw new Error("Daily Volume must be a positive integer");
               }
             }}
             className="border p-2 mb-2 w-full"
@@ -145,7 +153,7 @@ export default function CreateStock() {
           {/* Display the fetched data */}
           <div>
             <h2>Stock List</h2>
-            <table border="1" cellPadding="8">
+            <table border={1} cellPadding={8}>
               <thead>
                 <tr>
                   <th>ID#</th>
