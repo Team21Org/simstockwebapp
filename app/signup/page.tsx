@@ -4,8 +4,8 @@
 
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
+// import Image from "next/image";
+// import Link from "next/link";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ export default function SignUp() {
   const [accesslevel, setAccessLevel] = useState(""); // Access level field
 
   const [users, setUsers] = useState([]); // State to hold user data
-  const [error, setError] = useState(""); // State to hold error messages
+  // const [error, setError] = useState(""); // State to hold error messages
 
   // Fetch the data when the component mounts
   const fetchData = async () => {
