@@ -14,12 +14,13 @@ datasource db {
 }
 
 model Profile {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @unique
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
   bio       String?
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user      User       @relation(fields: [userId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  portfolio Portfolio?
 }
 
 model User {
@@ -31,4 +32,30 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isAdmin   Boolean  @default(false)
+}
+
+model Stock {
+  id           Int       @id @default(autoincrement())
+  stockId      Int       @unique
+  ticker       String    @unique
+  companyName  String?
+  currentPrice Decimal   @default(0.00) @db.Money
+  openPrice    Decimal   @default(0.00) @db.Money
+  dayHigh      Decimal   @default(0.00) @db.Money
+  dayLow       Decimal   @default(0.00) @db.Money
+  dailyVolume  Int       @default(0)
+  boughtStock  Portfolio @relation(fields: [stockId], references: [id])
+}
+
+model Portfolio {
+  id          Int      @id @default(autoincrement())
+  portfolioId Int      @unique
+  cash        Decimal  @default(0.00) @db.Money
+  totalValue  Decimal  @default(0.00) @db.Money
+  // The total value is calculated as the sum of cash and the value of all stocks in the portfolio
+  // This can be calculated dynamically in your application logic
+  user        Profile  @relation(fields: [portfolioId], references: [id])
+  stocks      Stock[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
