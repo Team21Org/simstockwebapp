@@ -48,30 +48,31 @@ model Profile {
 }
 
 model Stock {
-  id              Int              @id @default(autoincrement())
-  stockId         Int              @unique
-  ticker          String           @unique
-  companyName     String?
-  currentPrice    Decimal          @default(0.00) @db.Money
-  openPrice       Decimal          @default(0.00) @db.Money
-  dayHigh         Decimal          @default(0.00) @db.Money
-  dayLow          Decimal          @default(0.00) @db.Money
-  dailyVolume     Int              @default(0)
-  initialVolume   Int // Volume set by the admin
-  transactions    Transaction[]
+  id            Int     @id @default(autoincrement())
+  stockId       Int     @unique
+  ticker        String  @unique
+  companyName   String?
+  currentPrice  Decimal @default(0.00) @db.Money
+  openPrice     Decimal @default(0.00) @db.Money
+  dayHigh       Decimal @default(0.00) @db.Money
+  dayLow        Decimal @default(0.00) @db.Money
+  dailyVolume   Int     @default(0)
+  initialVolume Int // Volume set by the admin
+
   portfolioStocks PortfolioStock[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  Transaction     Transaction[]
 }
 
 model Portfolio {
   id           Int              @id @default(autoincrement())
-  portfolioId  Int              @unique
   cash         Decimal          @default(0.00) @db.Money
   totalValue   Decimal          @default(0.00) @db.Money // Dynamically calculated
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
-  user         Profile          @relation(fields: [portfolioId], references: [id])
+  userId       Int              @unique // Reference to the user
+  user         Profile          @relation(fields: [userId], references: [id]) // Corrected relation
   stocks       PortfolioStock[]
   transactions Transaction[]
 }
@@ -84,20 +85,22 @@ model PortfolioStock {
   averageCost Decimal   @default(0.00) @db.Money // Average cost per share
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
   stock       Stock     @relation(fields: [stockId], references: [id])
+
+  @@unique([portfolioId, stockId]) // Ensure unique combination of portfolio and stock
 }
 
 model Transaction {
-  id            Int          @id @default(autoincrement())
-  transactionId Int          @unique
-  userId        Int // Reference to the user who made the transaction
-  type          TransactType // Enum to identify transaction type (BUY, SELL, DEPOSIT, WITHDRAW)
-  stockId       Int? // Nullable for deposits/withdrawals
-  quantity      Int? // Nullable for deposits/withdrawals
-  amount        Decimal      @default(0.00) @db.Money // Total transaction amount
-  createdAt     DateTime     @default(now())
-  user          User         @relation(fields: [userId], references: [id])
-  stock         Stock?       @relation(fields: [stockId], references: [id])
-  portfolio     Portfolio    @relation(fields: [transactionId], references: [id])
+  id          Int          @id @default(autoincrement())
+  userId      Int // Reference to the user who made the transaction
+  type        TransactType // Enum to identify transaction type (BUY, SELL, DEPOSIT, WITHDRAW)
+  stockId     Int? // Nullable for deposits/withdrawals
+  quantity    Int? // Nullable for deposits/withdrawals
+  amount      Decimal      @default(0.00) @db.Money // Total transaction amount
+  createdAt   DateTime     @default(now())
+  stock       Stock?       @relation(fields: [stockId], references: [id])
+  portfolioId Int // Reference to the portfolio
+  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id])
+  User        User         @relation(fields: [userId], references: [id])
 }
 
 model MarketSchedule {

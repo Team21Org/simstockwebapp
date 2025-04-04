@@ -7,7 +7,7 @@ async function main() {
   const adminUser = await prisma.user.create({
     data: {
       email: "admin@example.com",
-      password: "securepassword",
+      password: "hashedPassword",
       fullName: "Admin User",
       role: "ADMIN",
       profile: {
@@ -21,7 +21,7 @@ async function main() {
   const regularUser = await prisma.user.create({
     data: {
       email: "user@example.com",
-      password: "securepassword",
+      password: "hashedPassword",
       fullName: "John Doe",
       role: "USER",
       profile: {
@@ -36,18 +36,20 @@ async function main() {
         },
       },
     },
-  },
-  include: {
-    profile: {
-      include: {
-        portfolio: true,
-      },
-    },
-  },
   });
 
-  // Access the portfolio ID correctly
-  const portfolioId = regularUser.profile?.portfolio?.id!;
+  const regularUserWithProfile = await prisma.user.findUnique({
+    where: { id: regularUser.id },
+    include: {
+      profile: {
+        include: {
+          portfolio: true,
+        },
+      },
+    },
+  });
+
+  const portfolioId = regularUserWithProfile?.profile?.portfolio?.id!;
 
   // Create Stocks
   const stockA = await prisma.stock.create({
@@ -82,6 +84,7 @@ async function main() {
   await prisma.transaction.create({
     data: {
       userId: regularUser.id,
+      portfolioId: portfolioId, // Add portfolioId
       type: "DEPOSIT",
       amount: 5000.0,
     },
@@ -90,6 +93,7 @@ async function main() {
   await prisma.transaction.create({
     data: {
       userId: regularUser.id,
+      portfolioId: portfolioId, // Add portfolioId
       type: "BUY",
       stockId: stockA.id,
       quantity: 10,
