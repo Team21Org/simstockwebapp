@@ -23,7 +23,7 @@ export default function SignUp() {
   useEffect(() => {
     async function fetchData(model: string) {
       try {
-        const response = await fetch(`/api/${model}`);
+        const response = await fetch(`/api/route?model=user`);
         if (!response.ok) {
           throw new Error(`Failed to fetch data for model: ${model}`);
         }
