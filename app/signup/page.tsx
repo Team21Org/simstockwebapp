@@ -19,26 +19,6 @@ interface User {
 export default function SignUp() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData(model: string) {
-      try {
-        const response = await fetch(`/api/route?model=user`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data for model: ${model}`);
-        }
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData("user"); // Fetch data for the "user" model
-  }, []);
-
   return (
     <>
       <Head>
