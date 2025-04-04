@@ -9,6 +9,7 @@ async function main() {
       email: "admin@example.com",
       password: "hashedPassword",
       fullName: "Admin User",
+      userName: "adminUser",
       role: "ADMIN",
       profile: {
         create: {
@@ -23,6 +24,7 @@ async function main() {
       email: "user@example.com",
       password: "hashedPassword",
       fullName: "John Doe",
+      userName: "johndoe",
       role: "USER",
       profile: {
         create: {
