@@ -2,23 +2,13 @@
 // src/app/signup/page.js
 //This is the user registration portal
 import prisma from "@/lib/prisma";
-
-import { useState, useEffect } from "react";
 import Head from "next/head";
-import "@/app/api/route"; // Import the middleware to use the GET function
 // import Image from "next/image";
 // import Link from "next/link";
 
-interface User {
-  id: string;
-  email: string;
-  fullName: string;
-  userName: string;
-}
+export default async function SignUp() {
+  const users = await prisma.user.findMany();
 
-export default function SignUp() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
   return (
     <>
       <Head>
@@ -28,17 +18,14 @@ export default function SignUp() {
         <title>Stock Sim | Sign-Up</title>
       </Head>
       <div className="w-full max-w-md">
-        {loading ? (
-          <p>Loading users...</p>
-        ) : (
-          <ol>
-            {users.map((user) => (
-              <li key={user.id} className="mb-2">
-                {user.email} - {user.fullName} - {user.userName}
-              </li>
-            ))}
-          </ol>
-        )}
+        <h1 className="text-2xl font-bold mb-4">Sign Up Now!</h1>
+        <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
+          {users.map((user) => (
+            <li key={user.id} className="mb-2">
+              {user.email} - {user.fullName} - {user.userName}
+            </li>
+          ))}
+        </ol>
       </div>
     </>
   );
