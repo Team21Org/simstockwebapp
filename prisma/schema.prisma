@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +5,94 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  password     String
+  fullName     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  role         Role          @default(USER)
+  userName     String        @default("")
+  profile      Profile?
+  transactions Transaction[]
+}
+
+model Profile {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  bio       String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  portfolio Portfolio?
+  user      User       @relation(fields: [userId], references: [id])
+}
+
+model Stock {
+  id              Int              @id @default(autoincrement())
+  stockId         Int              @unique
+  ticker          String           @unique
+  companyName     String?
+  currentPrice    Decimal          @default(0.00) @db.Money
+  openPrice       Decimal          @default(0.00) @db.Money
+  dayHigh         Decimal          @default(0.00) @db.Money
+  dayLow          Decimal          @default(0.00) @db.Money
+  dailyVolume     Int              @default(0)
+  createdAt       DateTime         @default(now())
+  initialVolume   Int
+  updatedAt       DateTime         @updatedAt
+  portfolioStocks PortfolioStock[]
+  Transaction     Transaction[]
+}
+
+model Portfolio {
+  id           Int              @id @default(autoincrement())
+  cash         Decimal          @default(0.00) @db.Money
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  totalValue   Decimal          @default(0.00) @db.Money
+  userId       Int              @unique
+  user         Profile          @relation(fields: [userId], references: [id])
+  stocks       PortfolioStock[]
+  transactions Transaction[]
+}
+
+model PortfolioStock {
+  id          Int       @id @default(autoincrement())
+  portfolioId Int
+  stockId     Int
+  quantity    Int       @default(0)
+  averageCost Decimal   @default(0.00) @db.Money
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  stock       Stock     @relation(fields: [stockId], references: [id])
+
+  @@unique([portfolioId, stockId])
+}
+
+model Transaction {
+  id          Int          @id @default(autoincrement())
+  userId      Int
+  type        TransactType
+  stockId     Int?
+  quantity    Int?
+  amount      Decimal      @default(0.00) @db.Money
+  createdAt   DateTime     @default(now())
+  portfolioId Int
+  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id])
+  stock       Stock?       @relation(fields: [stockId], references: [id])
+  User        User         @relation(fields: [userId], references: [id])
+}
+
+model MarketSchedule {
+  id         Int       @id @default(autoincrement())
+  marketOpen Boolean   @default(false)
+  startTime  DateTime?
+  endTime    DateTime?
+  holiday    Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 enum Role {
@@ -23,93 +105,4 @@ enum TransactType {
   SELL
   DEPOSIT
   WITHDRAW
-}
-
-model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  password     String
-  fullName     String
-  userName     String        @default("")
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  role         Role          @default(USER)
-  profile      Profile?
-  transactions Transaction[]
-}
-
-model Profile {
-  id        Int        @id @default(autoincrement())
-  userId    Int        @unique
-  bio       String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  user      User       @relation(fields: [userId], references: [id])
-  portfolio Portfolio?
-}
-
-model Stock {
-  id            Int     @id @default(autoincrement())
-  stockId       Int     @unique
-  ticker        String  @unique
-  companyName   String?
-  currentPrice  Decimal @default(0.00) @db.Money
-  openPrice     Decimal @default(0.00) @db.Money
-  dayHigh       Decimal @default(0.00) @db.Money
-  dayLow        Decimal @default(0.00) @db.Money
-  dailyVolume   Int     @default(0)
-  initialVolume Int // Volume set by the admin
-
-  portfolioStocks PortfolioStock[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  Transaction     Transaction[]
-}
-
-model Portfolio {
-  id           Int              @id @default(autoincrement())
-  cash         Decimal          @default(0.00) @db.Money
-  totalValue   Decimal          @default(0.00) @db.Money // Dynamically calculated
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  userId       Int              @unique // Reference to the user
-  user         Profile          @relation(fields: [userId], references: [id]) // Corrected relation
-  stocks       PortfolioStock[]
-  transactions Transaction[]
-}
-
-model PortfolioStock {
-  id          Int       @id @default(autoincrement())
-  portfolioId Int // Reference to the portfolio
-  stockId     Int // Reference to the stock
-  quantity    Int       @default(0) // Number of shares owned
-  averageCost Decimal   @default(0.00) @db.Money // Average cost per share
-  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
-  stock       Stock     @relation(fields: [stockId], references: [id])
-
-  @@unique([portfolioId, stockId]) // Ensure unique combination of portfolio and stock
-}
-
-model Transaction {
-  id          Int          @id @default(autoincrement())
-  userId      Int // Reference to the user who made the transaction
-  type        TransactType // Enum to identify transaction type (BUY, SELL, DEPOSIT, WITHDRAW)
-  stockId     Int? // Nullable for deposits/withdrawals
-  quantity    Int? // Nullable for deposits/withdrawals
-  amount      Decimal      @default(0.00) @db.Money // Total transaction amount
-  createdAt   DateTime     @default(now())
-  stock       Stock?       @relation(fields: [stockId], references: [id])
-  portfolioId Int // Reference to the portfolio
-  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id])
-  User        User         @relation(fields: [userId], references: [id])
-}
-
-model MarketSchedule {
-  id         Int       @id @default(autoincrement())
-  marketOpen Boolean   @default(false) // Is the market currently open?
-  startTime  DateTime? // Market opening time
-  endTime    DateTime? // Market closing time
-  holiday    Boolean   @default(false) // Is it a holiday?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
 }
