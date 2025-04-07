@@ -14,11 +14,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$prisma$2b$extension$2d$accelerat_689191d017558f044f7bd9fdbf0e2c6f$2f$node_modules$2f40$prisma$2f$extension$2d$accelerate$2f$dist$2f$esm$2f$entry$2e$fetch$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/@prisma+extension-accelerat_689191d017558f044f7bd9fdbf0e2c6f/node_modules/@prisma/extension-accelerate/dist/esm/entry.fetch.js [app-client] (ecmascript) <locals>");
 ;
 ;
-// Ensure the extension is properly configured
-const accelerateConfig = {
-    enabled: true
-}; // Adjust configuration as needed
-const prismaWithAccelerate = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$prisma$2b$extension$2d$accelerat_689191d017558f044f7bd9fdbf0e2c6f$2f$node_modules$2f40$prisma$2f$extension$2d$accelerate$2f$dist$2f$esm$2f$entry$2e$fetch$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["withAccelerate"])();
 const globalForPrisma = global;
 const prisma = globalForPrisma.prisma || new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$prisma$2b$client$40$6$2e$5$2e$0_prisma_d7354b8d13280d54180af8135cd43e10$2f$node_modules$2f40$prisma$2f$client$2f$index$2d$browser$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["PrismaClient"]().$extends((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$prisma$2b$extension$2d$accelerat_689191d017558f044f7bd9fdbf0e2c6f$2f$node_modules$2f40$prisma$2f$extension$2d$accelerate$2f$dist$2f$esm$2f$entry$2e$fetch$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["withAccelerate"])());
 if ("TURBOPACK compile-time truthy", 1) globalForPrisma.prisma = prisma;
