@@ -6,24 +6,24 @@ import Head from "next/head";
 // import { signIn } from "next-auth/react";
 
 export default function Login() {
-  const handleSubmit = async (formData: FormData) => {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+  // const handleSubmit = async (formData: FormData) => {
+  //   const email = formData.get("email") as string;
+  //   const password = formData.get("password") as string;
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+  //   const result = await signIn("credentials", {
+  //     redirect: false,
+  //     email,
+  //     password,
+  //   });
 
-    if (result?.error) {
-      alert("Invalid credentials");
-    } else {
-      alert("Login successful!");
-      // Redirect to another page if needed
-      window.location.href = "/dashboard"; // Example redirect
-    }
-  };
+  //   if (result?.error) {
+  //     alert("Invalid credentials");
+  //   } else {
+  //     alert("Login successful!");
+  //     // Redirect to another page if needed
+  //     window.location.href = "/dashboard"; // Example redirect
+  //   }
+  // };
 
   return (
     <div>
@@ -36,7 +36,7 @@ export default function Login() {
       <h3>Login</h3>
 
       {/* <form id="loginform"> */}
-      <form
+      {/* <form
         onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.target as HTMLFormElement);
@@ -52,7 +52,7 @@ export default function Login() {
           <input name="password" type="password" />
         </label>
         <button>Sign In</button>
-      </form>
+      </form> */}
       {/* <Link id="accbtn" href="/signup">
           {" "}
           No Account? Make One Here!{" "}

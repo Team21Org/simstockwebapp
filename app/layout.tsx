@@ -38,11 +38,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Link className="login" href="/login">
               Log In
             </Link>
-<<<<<<< HEAD
-            <Link href="/Profile/schedule">View Schedule</Link>
-=======
             <Link href="/market/schedule">View Schedule</Link>
->>>>>>> d423818a104d6f06ec68924a598a9c8dbab73886
             <Link href="/market">View Market</Link>
             <div className="dropdown">
               <button className="dropbtn">Account</button>

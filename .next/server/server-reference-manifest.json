@@ -1,5 +1,1 @@
-{
-  "node": {},
-  "edge": {},
-  "encryptionKey": "xhtVVCk+/Bdtc8pAg3ZElG1yqjjCCt8FXsLNTjnP8ec="
-}
+{"node":{"40cdf8856a69bea35cc4b8dffc8401c72cd63fd8f6":{"workers":{"app/signup/page":{"moduleId":"3915","async":false}},"layer":{"app/signup/page":"rsc"}}},"edge":{},"encryptionKey":"xhtVVCk+/Bdtc8pAg3ZElG1yqjjCCt8FXsLNTjnP8ec="}
