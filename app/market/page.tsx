@@ -1,4 +1,3 @@
-"use client";
 // src/app/page.js
 
 // Project: Stock Trading System Simulator
@@ -6,25 +5,34 @@
 
 import prisma from "../lib/prisma";
 import Head from "next/head";
+import { revalidatePath } from "next/cache";
 
-export default function CreateStock() {
+import { redirect } from "next/navigation";
+
+export default async function CreateStock() {
   async function createStock(formData: FormData) {
     "use server";
-    const stockticker = formData.get("Stock Ticker") as string;
+    const ticker = formData.get("Stock Ticker") as string;
     const companyName = formData.get("Company Name") as string;
 
-    const dailyvolume = formData.get("Daily Volume") as string;
-    const openprice = formData.get("Open Price") as string;
+    const initialVolume = parseInt(formData.get("Daily Volume") as string);
+    const openPrice = parseFloat(formData.get("Open Price") as string);
 
     await prisma.stock.create({
       data: {
-        ticker: stockticker,
+        stockId: Math.floor(Math.random() * 1000000), // Example: Generate a random stock ID
+        ticker,
         companyName,
-        dailyVolume: Number(dailyvolume),
-        openPrice: parseFloat(openprice),
+        initialVolume,
+        openPrice,
       },
     });
+
+    revalidatePath("/market");
+    redirect("/market");
   }
+
+  const stocks = await prisma.stock.findMany();
 
   return (
     <>
@@ -36,50 +44,40 @@ export default function CreateStock() {
       </Head>
       <div>
         <h3>Create Stock</h3>
-        <form onSubmit={handleSubmit} className="mb-6 w-full max-w-md">
+        <form action={createStock} className="w-full max-w-md">
+          <h1 className="text-2xl font-bold mb-4">Add New Stock</h1>
+          <label htmlFor="Stock Ticker">Stock Ticker</label>
           <input
             type="text"
-            placeholder="Stock Ticker"
-            value={stockticker}
-            onChange={(e) => {
-              const value = e.target.value.toUpperCase(); // Convert to uppercase
-              if (value.length <= 4) {
-                // Ensure it's less than or equal to 4 characters
-                setStockTicker(value);
-              } else {
-                throw new Error("Stock Ticker must be 4 characters or less");
-              }
-            }}
-            className="border p-2 mb-2 w-full"
+            name="Stock Ticker"
+            id="Stock Ticker"
+            required
+            className="border border-gray-300 p-2 mb-4 w-full"
           />
+          <label htmlFor="Company Name">Company Name</label>
           <input
             type="text"
-            placeholder="Company Name"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            className="border p-2 mb-2 w-full"
+            name="Company Name"
+            id="Company Name"
+            required
+            className="border border-gray-300 p-2 mb-4 w-full"
           />
+          <label htmlFor="Daily Volume">Daily Volume</label>
           <input
-            type="text"
-            placeholder="Daily Volume"
-            value={dailyvolume}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (Number(value) >= 0 && Number.isInteger(Number(value))) {
-                // Ensure it's a positive integer
-                setDailyVolume(value);
-              } else {
-                throw new Error("Daily Volume must be a positive integer");
-              }
-            }}
-            className="border p-2 mb-2 w-full"
+            type="number"
+            name="Daily Volume"
+            id="Daily Volume"
+            required
+            className="border border-gray-300 p-2 mb-4 w-full"
           />
+          <label htmlFor="Open Price">Open Price</label>
           <input
-            type="text"
-            placeholder="Open Price"
-            value={openprice}
-            onChange={(e) => setOpenPrice(e.target.value)}
-            className="border p-2 mb-4 w-full"
+            type="number"
+            name="Open Price"
+            id="Open Price"
+            step="0.01"
+            required
+            className="border border-gray-300 p-2 mb-4 w-full"
           />
           <button
             type="submit"
@@ -104,13 +102,13 @@ export default function CreateStock() {
                 </tr>
               </thead>
               <tbody>
-                {stock.map((item, index) => (
-                  <tr key={item.id || index}>
-                    <td>{index + 1}</td>
-                    <td>{item.stockticker}</td>
-                    <td>{item.companyName}</td>
-                    <td>{item.dailyvolume}</td>
-                    <td>{item.openprice}</td>
+                {stocks.map((stock) => (
+                  <tr key={stock.stockId}>
+                    <td>{stock.stockId}</td>
+                    <td>{stock.ticker}</td>
+                    <td>{stock.companyName}</td>
+                    <td>{stock.initialVolume}</td>
+                    <td>${stock.openPrice.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>

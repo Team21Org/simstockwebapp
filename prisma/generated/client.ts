@@ -118,18 +118,17 @@ const config: runtime.GetPrismaClientConfig = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "value": "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiNzViMTc2ZjktMTIwMC00NTFlLTg3ZmItZGRhODYzMmZhMmZhIiwidGVuYW50X2lkIjoiNjA4OTkwNzM3ZTlkZGRhOWRlNWQ3NmQwMjhiYzIyNWY1ZmYwMTM3MzkyMjE1YjJmOTgwMmQxYTBiNDQ2N2U5NiIsImludGVybmFsX3NlY3JldCI6Ijg0NTEwZjZjLWM2M2ItNGE3Yy05ODE2LTZiZTEzNGJhMDIwZiJ9.ScrB53uuTTEchlH7uqbsoTVC_gpgXhbI4y7-0P2VX58"
       }
     }
   },
   "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"./generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id           Int           @id @default(autoincrement())\n  email        String        @unique\n  password     String\n  fullName     String\n  createdAt    DateTime      @default(now())\n  updatedAt    DateTime      @updatedAt\n  role         Role          @default(USER)\n  userName     String        @default(\"\")\n  profile      Profile?\n  transactions Transaction[]\n}\n\nmodel Profile {\n  id        Int        @id @default(autoincrement())\n  userId    Int        @unique\n  bio       String?\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n  portfolio Portfolio?\n  user      User       @relation(fields: [userId], references: [id])\n}\n\nmodel Stock {\n  id              Int              @id @default(autoincrement())\n  stockId         Int              @unique\n  ticker          String           @unique\n  companyName     String?\n  currentPrice    Decimal          @default(0.00) @db.Money\n  openPrice       Decimal          @default(0.00) @db.Money\n  dayHigh         Decimal          @default(0.00) @db.Money\n  dayLow          Decimal          @default(0.00) @db.Money\n  dailyVolume     Int              @default(0)\n  createdAt       DateTime         @default(now())\n  initialVolume   Int\n  updatedAt       DateTime         @updatedAt\n  portfolioStocks PortfolioStock[]\n  Transaction     Transaction[]\n}\n\nmodel Portfolio {\n  id           Int              @id @default(autoincrement())\n  cash         Decimal          @default(0.00) @db.Money\n  createdAt    DateTime         @default(now())\n  updatedAt    DateTime         @updatedAt\n  totalValue   Decimal          @default(0.00) @db.Money\n  userId       Int              @unique\n  user         Profile          @relation(fields: [userId], references: [id])\n  stocks       PortfolioStock[]\n  transactions Transaction[]\n}\n\nmodel PortfolioStock {\n  id          Int       @id @default(autoincrement())\n  portfolioId Int\n  stockId     Int\n  quantity    Int       @default(0)\n  averageCost Decimal   @default(0.00) @db.Money\n  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])\n  stock       Stock     @relation(fields: [stockId], references: [id])\n\n  @@unique([portfolioId, stockId])\n}\n\nmodel Transaction {\n  id          Int          @id @default(autoincrement())\n  userId      Int\n  type        TransactType\n  stockId     Int?\n  quantity    Int?\n  amount      Decimal      @default(0.00) @db.Money\n  createdAt   DateTime     @default(now())\n  portfolioId Int\n  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id])\n  stock       Stock?       @relation(fields: [stockId], references: [id])\n  User        User         @relation(fields: [userId], references: [id])\n}\n\nmodel MarketSchedule {\n  id         Int       @id @default(autoincrement())\n  marketOpen Boolean   @default(false)\n  startTime  DateTime?\n  endTime    DateTime?\n  holiday    Boolean   @default(false)\n  createdAt  DateTime  @default(now())\n  updatedAt  DateTime  @updatedAt\n}\n\nenum Role {\n  USER\n  ADMIN\n}\n\nenum TransactType {\n  BUY\n  SELL\n  DEPOSIT\n  WITHDRAW\n}\n",
   "inlineSchemaHash": "0fc5ed28388dc9b860ff39e1dd9b35122771071fbb0caeb70b54f241fc274d30",
-  "copyEngine": true,
+  "copyEngine": false,
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -145,12 +144,6 @@ config.compilerWasm = undefined
 
 
 
-// file annotations for bundling tools to include these files
-path.join(__dirname, "query_engine-windows.dll.node")
-path.join(process.cwd(), "prisma/generated/query_engine-windows.dll.node")
-// file annotations for bundling tools to include these files
-path.join(__dirname, "schema.prisma")
-path.join(process.cwd(), "prisma/generated/schema.prisma")
 
 
 interface PrismaClientConstructor {
