@@ -35,6 +35,7 @@ export default function Index() {
         user-friendly interface.
       </p>
       <h4 id="h4alt1">Ready To Start? </h4>
+<<<<<<< HEAD
       <Image
         id="homeimg2"
         src="/profileicon.png"
@@ -55,6 +56,12 @@ export default function Index() {
       <Link href="/market">
         <h4 id="h4alt2"> View Our Current Market</h4>
       </Link>
+=======
+      <Image id="homeimg2" src="/profileicon.png" alt="Profile Icon" width={63} height={63} />
+      <Link href="/signup"> <h4 id="h4alt2"> Sign Up For Free!</h4></Link>
+      <Image id="homeimg3" src="/stockicon.png" alt="Stock Icon" width={63} height={63} />
+      <Link href="/market"> <h4 id="h4alt2"> View Our Current Market</h4></Link>
+>>>>>>> d423818a104d6f06ec68924a598a9c8dbab73886
     </>
   );
 }

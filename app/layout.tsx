@@ -38,14 +38,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Link className="login" href="/login">
               Log In
             </Link>
+<<<<<<< HEAD
             <Link href="/Profile/schedule">View Schedule</Link>
+=======
+            <Link href="/market/schedule">View Schedule</Link>
+>>>>>>> d423818a104d6f06ec68924a598a9c8dbab73886
             <Link href="/market">View Market</Link>
             <div className="dropdown">
               <button className="dropbtn">Account</button>
               <div className="dropdown-content">
-                <Link href="/Profile">Profile</Link>
-                <Link href="/Profile/portfolio">Portfolio</Link>
-                <Link href="/Profile/portfolio/transaction-history">
+                <Link href="/profile">Profile</Link>
+                <Link href="/profile/portfolio">Portfolio</Link>
+                <Link href="/profile/portfolio/transaction-history">
                   Transaction History
                 </Link>
               </div>
