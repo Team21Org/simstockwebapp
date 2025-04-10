@@ -3,6 +3,8 @@
 import prisma from "../lib/prisma";
 import Head from "next/head";
 import Form from "next/form";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export default async function SignUp() {
   async function createUser(formData: FormData) {
@@ -12,6 +14,18 @@ export default async function SignUp() {
     const password = formData.get("Password") as string;
     const name = formData.get("Full Name") as string;
     const user = formData.get("Username") as string;
+
+    await prisma.user.create({
+      data: {
+        email,
+        password,
+        fullName: name,
+        userName: user,
+      },
+    });
+
+    revalidatePath("/signup");
+    redirect("/signup");
   }
 
   const users = await prisma.user.findMany();
