@@ -1,0 +1,14 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/admin/createstock/page": "/admin/createstock",
+  "/market/page": "/market",
+  "/admin/changeschedule/page": "/admin/changeschedule",
+  "/market/schedule/page": "/market/schedule",
+  "/login/page": "/login",
+  "/profile/page": "/profile",
+  "/signup/page": "/signup",
+  "/page": "/",
+  "/profile/portfolio/balance/page": "/profile/portfolio/balance",
+  "/profile/portfolio/transaction-history/page": "/profile/portfolio/transaction-history",
+  "/profile/portfolio/page": "/profile/portfolio"
+}
