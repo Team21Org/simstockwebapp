@@ -3,7 +3,7 @@
 // import Image from "next/image"
 import Head from "next/head";
 // import Link from "next/link";
-import { signIn } from "next-auth/react";
+// import { signIn } from "next-auth/react";
 
 export default function Login() {
   const handleSubmit = async (formData: FormData) => {
@@ -43,17 +43,17 @@ export default function Login() {
           await handleSubmit(formData);
         }}
       >
-      <label>
-        Username
-        <input name="email" type="email" />
-      </label>
-      <label>
-        Password
-        <input name="password" type="password" />
-      </label>
-      <button>Sign In</button>
-    </form>
-        {/* <Link id="accbtn" href="/signup">
+        <label>
+          Username
+          <input name="email" type="email" />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" />
+        </label>
+        <button>Sign In</button>
+      </form>
+      {/* <Link id="accbtn" href="/signup">
           {" "}
           No Account? Make One Here!{" "}
         </Link>
@@ -62,4 +62,3 @@ export default function Login() {
     </div>
   );
 }
-
