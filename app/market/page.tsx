@@ -4,87 +4,27 @@
 // Project: Stock Trading System Simulator
 // Display Create Stock Page
 
-import { useState, useEffect } from "react";
+import prisma from "../lib/prisma";
 import Head from "next/head";
 
 export default function CreateStock() {
-  const [stockticker, setStockTicker] = useState("");
-  const [companyname, setCompanyName] = useState(""); // Full name field
-  const [dailyvolume, setDailyVolume] = useState(""); // Password field
-  const [openprice, setOpenPrice] = useState("");
-  // const [pricehigh, setPriceHigh] = useState('');
-  // const [pricelow, setPriceLow] = useState('');
-  // const [currentprice, setCurrentPrice] = useState('');
+  async function createStock(formData: FormData) {
+    "use server";
+    const stockticker = formData.get("Stock Ticker") as string;
+    const companyName = formData.get("Company Name") as string;
 
-  interface Stock {
-    id?: number;
-    stockticker: string;
-    companyname: string;
-    dailyvolume: string;
-    openprice: string;
+    const dailyvolume = formData.get("Daily Volume") as string;
+    const openprice = formData.get("Open Price") as string;
+
+    await prisma.stock.create({
+      data: {
+        ticker: stockticker,
+        companyName,
+        dailyVolume: Number(dailyvolume),
+        openPrice: parseFloat(openprice),
+      },
+    });
   }
-
-  const [stock, setStock] = useState<Stock[]>([]); // State to hold user data
-  // const [error, setError] = useState(""); // State to hold error messages
-
-  // Fetch the data when the component mounts
-  const fetchData = async () => {
-    try {
-      const response = await fetch("/api?resource=stocks");
-      if (!response.ok) {
-        throw new Error("StockGET request failed");
-      }
-      const data = await response.json();
-      setStock(data);
-    } catch (err) {
-      console.error("Error fetching stock data:", err);
-      throw new Error("Error fetching stock data");
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  // Function to handle form submission for adding items
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const currentprice = openprice;
-    const pricehigh = openprice;
-    const pricelow = openprice;
-
-    try {
-      const res = await fetch("/api?resource=stocks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          stockticker,
-          companyname,
-          currentprice,
-          dailyvolume,
-          openprice,
-          pricehigh,
-          pricelow,
-        }),
-      });
-
-      if (res.ok) {
-        fetchData(); // Refresh the data after adding a new item
-        setStockTicker("");
-        setCompanyName("");
-        setDailyVolume("");
-        setOpenPrice("");
-        // setPriceHigh("");
-        // setPriceLow("");
-        // setCurrentPrice("");
-      } else {
-        console.error("Failed to add item");
-      }
-    } catch (err) {
-      console.error("Error adding item:", err);
-    }
-  };
 
   return (
     <>
@@ -115,7 +55,7 @@ export default function CreateStock() {
           <input
             type="text"
             placeholder="Company Name"
-            value={companyname}
+            value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             className="border p-2 mb-2 w-full"
           />
@@ -168,7 +108,7 @@ export default function CreateStock() {
                   <tr key={item.id || index}>
                     <td>{index + 1}</td>
                     <td>{item.stockticker}</td>
-                    <td>{item.companyname}</td>
+                    <td>{item.companyName}</td>
                     <td>{item.dailyvolume}</td>
                     <td>{item.openprice}</td>
                   </tr>
