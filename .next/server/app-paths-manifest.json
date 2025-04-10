@@ -1,15 +1,4 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/query/route": "app/query/route.js",
-  "/admin/changeschedule/page": "app/admin/changeschedule/page.js",
-  "/admin/createstock/page": "app/admin/createstock/page.js",
-  "/market/page": "app/market/page.js",
   "/page": "app/page.js",
-  "/login/page": "app/login/page.js",
-  "/profile/page": "app/profile/page.js",
-  "/profile/portfolio/balance/page": "app/profile/portfolio/balance/page.js",
-  "/market/schedule/page": "app/market/schedule/page.js",
-  "/signup/page": "app/signup/page.js",
-  "/profile/portfolio/page": "app/profile/portfolio/page.js",
-  "/profile/portfolio/transaction-history/page": "app/profile/portfolio/transaction-history/page.js"
+  "/signup/page": "app/signup/page.js"
 }

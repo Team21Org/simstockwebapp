@@ -19,9 +19,8 @@ p {
 
 /* Project Title in the Top Right */
 h1 {
-	text-align: right;
-	float: right;
-	margin-right: 10px;
+	text-align: center;
+	float: none;
 }
 
 /* Team Name and Member Names */
