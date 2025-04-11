@@ -18,7 +18,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html>
       <Head>
-        <title>SimStock</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
+        <title>Stock Sim</title>
       </Head>
       <body>
         <div>
