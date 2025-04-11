@@ -86,6 +86,10 @@ web_modules/
 # # Next.js build output
  .next
 out
+.next/cache/images/CAecAYufmKb0i1eBkypqIbmOHbfr9f4DeAQ1Nn-VuZ4/60.1744332248683.QZ_3oY5KR1DTq9nCIFxvQsNkxa1U-XxKHnuksYHdjH4.Vy8iMzNiYjktMTk2MWRkYWFkNTAi.webp
+.next/cache/images/d73WGcB4_eMJ3dLJC6fCxd0n1sd70L81EonJfU_6l0E/60.1744332248685.lugjWQKQHEK5aHnleQoSgZTp873gap1Ch_IPq5uErl8.Vy8iMTBkOGJlLTE5NjFkZGFhZDU1Ig.webp
+.next/cache/images/URzETG78tiLyP863elo536zyN6AtUx1vYISQkuOQKNE/60.1744332248682.IRgLNi444vCzCq17VUFxABnuHodwXSDb_LNatfd-KoA.Vy8iZWMwOS0xOTYxZGRhYWQ1NiI.webp
+.next/cache/images/H0VJ_XKxI781gwTA9tsxhS9NigLAxKiX7UgdEwMiFgA/60.1744332248683.4UKUUr0TE3eNwmstwbGxC0PLw5tc7ei4mnwxDeC73u4.Vy8iMWY2NjYtMTk2MWRkYWFkNTYi.webp
 
 # # Nuxt.js build / generate output
 .nuxt
