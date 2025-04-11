@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               height={110}
             />
           </Link>
-          <h1>Stock Trading System Simulator</h1>
+          <h1 className="simulatortitle"> Stock Trading System Simulator</h1>
           <h2>By Team 21</h2>
           <h2>Sam Kline, Michael Lacey, Josien Lajoie</h2>
           <div className="navbar">

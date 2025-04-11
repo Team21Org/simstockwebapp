@@ -22,6 +22,9 @@ h1 {
 	text-align: center;
 	float: none;
 }
+.simulatortitle {
+	float:right;
+}
 
 /* Team Name and Member Names */
 h2 {
