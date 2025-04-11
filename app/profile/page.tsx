@@ -1,8 +1,21 @@
 import Head from "next/head";
 // import Image from 'next/image';
 // import Link from "next/link";
+import prisma from "../lib/prisma";
+import Form from "next/form";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-export default function Profile() {
+export default async function Profile() {
+  async function fetchUserProfile() {
+    "use server";
+    // Fetch user profile data from the database
+    const user = await prisma.user.findFirst();
+    return user;
+  }
+
+  const userProfile = await fetchUserProfile();
+
   return (
     <>
       <Head>
