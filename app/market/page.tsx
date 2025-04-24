@@ -1,4 +1,4 @@
-// ./app/market/page.tsx
+// src/app/page.js
 
 // Project: Stock Trading System Simulator
 // Display Create Stock Page
@@ -10,37 +10,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export default async function CreateStock() {
-  async function createStock(formData: FormData) {
-    "use server";
-    const ticker = formData.get("Stock Ticker") as string;
-    const companyName = formData.get("Company Name") as string;
-
-    const initialVolume = parseInt(formData.get("Daily Volume") as string);
-    const openPrice = parseFloat(formData.get("Open Price") as string);
-
-    const lastStock = await prisma.stock.findFirst({
-      orderBy: {
-        stockId: "desc",
-      },
-    });
-
-    const nextStockId = lastStock
-      ? (parseInt(lastStock.stockId) + 1).toString()
-      : "1";
-
-    await prisma.stock.create({
-      data: {
-        stockId: nextStockId,
-        ticker,
-        companyName,
-        initialVolume,
-        openPrice,
-      },
-    });
-
-    revalidatePath("/market");
-    redirect("/market");
-  }
 
   const stocks = await prisma.stock.findMany();
 
@@ -53,54 +22,9 @@ export default async function CreateStock() {
         <title>Stock Sim | Market</title>
       </Head>
       <div>
-        <h3>Create Stock</h3>
-        <form action={createStock} className="w-full max-w-md">
-          <h1 className="text-2xl font-bold mb-4">Add New Stock</h1>
-          <label htmlFor="Stock Ticker">Stock Ticker</label>
-          <input
-            type="text"
-            name="Stock Ticker"
-            id="Stock Ticker"
-            required
-            className="border border-gray-300 p-2 mb-4 w-full"
-          />
-          <label htmlFor="Company Name">Company Name</label>
-          <input
-            type="text"
-            name="Company Name"
-            id="Company Name"
-            required
-            className="border border-gray-300 p-2 mb-4 w-full"
-          />
-          <label htmlFor="Daily Volume">Daily Volume</label>
-          <input
-            type="number"
-            name="Daily Volume"
-            id="Daily Volume"
-            required
-            className="border border-gray-300 p-2 mb-4 w-full"
-          />
-          <label htmlFor="Open Price">Open Price</label>
-          <input
-            type="number"
-            name="Open Price"
-            id="Open Price"
-            step="0.01"
-            required
-            className="border border-gray-300 p-2 mb-4 w-full"
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Add Item
-          </button>
-        </form>
-
         <div className="w-full max-w-md">
-          {/* Display the fetched data */}
           <div>
-            <h2>Stock List</h2>
+            <h3>View Market</h3>
             <table border={1} cellPadding={8}>
               <thead>
                 <tr>
