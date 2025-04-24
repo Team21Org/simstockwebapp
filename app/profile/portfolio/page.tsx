@@ -1,22 +1,8 @@
-// ./app/profile/portfolio/page.tsx
-
 import Head from "next/head";
 // import Image from 'next/image';
-// import Link from "next/link";
-import prisma from "../../lib/prisma";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
-
-const stocks = await prisma.stock.findMany({
-  orderBy: {
-    stockId: "asc",
-  },
-});
+import Link from "next/link";
 
 export default function Portfolio() {
-  async function tradeStock(formData: FormData) {
-    "use server";
-  }
   return (
     <>
       <Head>
@@ -40,9 +26,31 @@ export default function Portfolio() {
               <th>Opening Price</th>
             </tr>
           </thead>
-          <tbody>{}</tbody>
+          <tbody>
+          </tbody>
         </table>
-        <p>Trade</p>
+        <br />
+        <h3>Transaction History</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Transaction Type</th>
+              <th>Amount</th>
+              <th>Ticker Number</th>
+              <th>Quantity</th>
+              <th>Transaction Date</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <h3>Balance</h3>
+        <p>Current Balance:</p>
+        <div>
+          <Link className="btn" href="./balance">
+            Access Balance
+          </Link>
+        </div>
       </div>
     </>
   );
