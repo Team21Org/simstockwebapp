@@ -12,22 +12,31 @@ export default async function SignUp() {
     "use server";
 
     const email = formData.get("E-Mail address") as string;
+    const confirmEmail = formData.get("Confirm E-Mail Address");
     const password = formData.get("Password") as string;
+    const confirmPassword = formData.get("Confirm Password") as string;
     const name = formData.get("Full Name") as string;
     const user = formData.get("Username") as string;
 
     const authSecret = process.env.AUTH_SECRET;
 
+    if (password !== confirmPassword) {
+      throw new Error("Passwords do not match.");
+      wai;
+    }
+
     const hashedPassword = bcrypt.hashSync(password + authSecret, 10);
 
-    await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name: name,
-        userName: user,
-      },
-    });
+    if (email == confirmEmail && password == confirmPassword) {
+      await prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          name: name,
+          userName: user,
+        },
+      });
+    }
 
     revalidatePath("/signup");
     redirect("/signup");
@@ -53,17 +62,31 @@ export default async function SignUp() {
             id="E-Mail Address"
             required
           />
+          <label htmlFor="Confirm E-Mail Address">Confirm E-Mail Address</label>
+          <input
+            type="email"
+            name="Confirm E-Mail Address"
+            id="Confirm E-Mail Address"
+            required
+          />
           <label htmlFor="Password">Password</label>
           <input type="password" name="Password" id="Password" required />
+          <label htmlFor="Confirm Password">Confirm Password</label>
+          <input
+            type="password"
+            name="Confirm Password"
+            id="Confirm Password"
+            required
+          />
           <label htmlFor="Full Name">Full Name</label>
           <input type="text" name="Full Name" id="Full Name" required />
           <label htmlFor="Username">Username</label>
           <input type="text" name="Username" id="Username" required />
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-purple-500 text-white px-4 py-2 rounded"
           >
-            Add Item
+            SUBMIT
           </button>
         </div>
       </Form>

@@ -142,7 +142,7 @@ model PortfolioStock {
 }
 
 model MarketSchedule {
-  id         String    @id @default(cuid())
+  id         String    @unique @default("1")
   marketOpen Boolean   @default(false)
   startTime  DateTime?
   endTime    DateTime?
