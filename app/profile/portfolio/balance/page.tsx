@@ -1,6 +1,45 @@
 import Head from "next/head";
-// import Image from 'next/image';
-// import Link from 'next/link';
+import prisma from "../../../lib/prisma";
+
+export async function handleBalanceTransaction(formData: FormData) {
+  "use server";
+
+  const type = formData.get("balance") as string; // "withdraw" or "deposit"
+  const amount = parseFloat(formData.get("amount") as string);
+  const userId = "currentUserId"; // Replace with the actual user ID from the session
+
+  if (isNaN(amount) || amount <= 0) {
+    throw new Error("Invalid amount. Please enter a positive number.");
+  }
+
+  const portfolio = await prisma.portfolio.findFirst({
+    where: { profileId: userId },
+  });
+
+  if (!portfolio) {
+    throw new Error("Portfolio not found.");
+  }
+
+  if (type === "withdraw") {
+    if (Number(portfolio.cash) < amount) {
+      throw new Error("Insufficient funds for withdrawal.");
+    }
+
+    await prisma.portfolio.update({
+      where: { id: portfolio.id },
+      data: { cash: { decrement: amount } },
+    });
+  } else if (type === "deposit") {
+    await prisma.portfolio.update({
+      where: { id: portfolio.id },
+      data: { cash: { increment: amount } },
+    });
+  } else {
+    throw new Error("Invalid transaction type.");
+  }
+
+  return { success: true };
+}
 
 export default function accountbalance() {
   return (

@@ -18,18 +18,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials: { email: string; password: string }) {
         const { email, password } = credentials;
 
         // Retrieve AUTH_SECRET from environment variables
         const authSecret = process.env.AUTH_SECRET;
         if (!authSecret) {
-          throw new Error("AUTH_SECRET is not defined in the environment variables.");
+          throw new Error(
+            "AUTH_SECRET is not defined in the environment variables."
+          );
         }
 
         // Query the user from the database
-        const user = await prisma.user.findFirst({
-          where: { email },
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
         });
 
         if (!user) {
@@ -37,7 +39,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }
 
         // Verify the password
-        const isPasswordValid = bcrypt.compareSync(password + authSecret, user.password);
+        const isPasswordValid = bcrypt.compareSync(
+          password + authSecret,
+          user.password
+        );
         if (!isPasswordValid) {
           throw new Error("Invalid email or password.");
         }

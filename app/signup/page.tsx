@@ -23,7 +23,7 @@ export default async function SignUp() {
     await prisma.user.create({
       data: {
         email,
-        password: hashedPassword, 
+        password: hashedPassword,
         name: name,
         userName: user,
       },

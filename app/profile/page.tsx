@@ -17,7 +17,7 @@ export default async function Profile() {
   }
 
   // Query the database using the session email
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email },
     include: {
       profile: {
@@ -44,7 +44,7 @@ export default async function Profile() {
         <p>Username: {userName}</p>
         <p>E-Mail Address: {session?.user.email}</p>
         <p>Account Number: {accountNumber}</p>
-        <p>Account Balance: ${accountBalance}</p>
+        <p>Account Balance: ${accountBalance.toFixed(2)}</p>
       </div>
     </>
   );

@@ -87,6 +87,9 @@ importers:
       eslint-config-next:
         specifier: ^15.3.1
         version: 15.3.1(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3)
+      import-in-the-middle:
+        specifier: ^1.13.1
+        version: 1.13.1
 
 packages:
 
