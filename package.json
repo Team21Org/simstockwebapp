@@ -26,9 +26,10 @@
 		"next-auth": "5.0.0-beta.26",
 		"node": "^23.11.0",
 		"prisma": "^6.6.0",
-		"react": "^19.1.0",
-		"react-dom": "^19.1.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"react-query": "^3.39.3",
+		"require-in-the-middle": "^7.5.2",
 		"sharp": "^0.34.1",
 		"tailwindcss": "^4.1.4",
 		"ts-jest": "^29.3.2",
@@ -38,7 +39,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^22.14.1",
-		"eslint": "^9.25.0",
+		"eslint": "^9.25.1",
 		"eslint-config-next": "^15.3.1"
 	}
 }
