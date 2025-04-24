@@ -27,11 +27,9 @@ export default function Portfolio() {
             </tr>
           </thead>
           <tbody>
-            {/* <!-- The table needs to be populated from the database, such as with JavaScript --> */}
           </tbody>
         </table>
         <p>Account Balance</p>
-        {/* <!-- Pull user account balance --> */}
       </div>
     </>
   );

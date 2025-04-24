@@ -1,18 +1,26 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
+
+  const authSecret = process.env.AUTH_SECRET;
+
+  const adminPassword = bcrypt.hashSync("adminPassword123" + authSecret, 10);
+  const userPassword = bcrypt.hashSync("userPassword123" + authSecret, 10);
+
   // Create Users
   const adminUser = await prisma.user.create({
     data: {
       email: "admin@example.com",
-      password: "hashedPassword",
-      fullName: "Admin User",
+      password: adminPassword,
+      name: "Admin User",
       userName: "adminUser",
       role: "ADMIN",
       profile: {
         create: {
+          email: "admin@example.com",
           bio: "Administrator of the stock trading system.",
         },
       },
@@ -22,14 +30,15 @@ async function main() {
   const regularUser = await prisma.user.create({
     data: {
       email: "user@example.com",
-      password: "hashedPassword",
-      fullName: "John Doe",
+      password: userPassword,
+      name: "John Doe",
       userName: "johndoe",
       role: "USER",
       profile: {
         create: {
+          email: "user@example.com",
           bio: "A regular user trading stocks.",
-          portfolio: {
+          Portfolio: {
             create: {
               cash: 10000.0,
               totalValue: 0.0,
@@ -45,18 +54,18 @@ async function main() {
     include: {
       profile: {
         include: {
-          portfolio: true,
+          Portfolio: true,
         },
       },
     },
   });
 
-  const portfolioId = regularUserWithProfile?.profile?.portfolio?.id!;
+  const portfolioId = regularUserWithProfile?.profile?.Portfolio?.id!;
 
   // Create Stocks
   const stockA = await prisma.stock.create({
     data: {
-      stockId: 1,
+      stockId: "1",
       ticker: "AAPL",
       companyName: "Apple Inc.",
       currentPrice: 150.0,
@@ -70,7 +79,7 @@ async function main() {
 
   const stockB = await prisma.stock.create({
     data: {
-      stockId: 2,
+      stockId: "2",
       ticker: "GOOGL",
       companyName: "Alphabet Inc.",
       currentPrice: 2800.0,
@@ -85,19 +94,21 @@ async function main() {
   // Create Transactions
   await prisma.transaction.create({
     data: {
-      userId: regularUser.id,
-      portfolioId: portfolioId, // Add portfolioId
+      user: { connect: { id: regularUser.id } },
+      portfolio: { connect: { id: portfolioId } }, // Add portfolioId
       type: "DEPOSIT",
+      stock: { connect: { id: stockA.id } },
+      quantity: 0,
       amount: 5000.0,
     },
   });
 
   await prisma.transaction.create({
     data: {
-      userId: regularUser.id,
-      portfolioId: portfolioId, // Add portfolioId
+      user: { connect: { id: regularUser.id } },
+      portfolio: { connect: { id: portfolioId } }, // Add portfolioId
       type: "BUY",
-      stockId: stockA.id,
+      stock: { connect: { id: stockA.id } },
       quantity: 10,
       amount: 1500.0,
     },
@@ -107,7 +118,7 @@ async function main() {
   await prisma.portfolioStock.create({
     data: {
       portfolioId: portfolioId,
-      stockId: stockA.id,
+      stockId: stockA.stockId,
       quantity: 10,
       averageCost: 150.0,
     },

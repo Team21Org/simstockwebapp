@@ -5,6 +5,7 @@ import Head from "next/head";
 import Form from "next/form";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import bcrypt from "bcryptjs";
 
 export default async function SignUp() {
   async function createUser(formData: FormData) {
@@ -15,11 +16,15 @@ export default async function SignUp() {
     const name = formData.get("Full Name") as string;
     const user = formData.get("Username") as string;
 
+    const authSecret = process.env.AUTH_SECRET;
+
+    const hashedPassword = bcrypt.hashSync(password + authSecret, 10);
+
     await prisma.user.create({
       data: {
         email,
-        password,
-        fullName: name,
+        password: hashedPassword, 
+        name: name,
         userName: user,
       },
     });
@@ -65,7 +70,7 @@ export default async function SignUp() {
       <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
         {users.map((user) => (
           <li key={user.id} className="mb-2">
-            {user.email} - {user.fullName} - {user.userName}
+            {user.email} - {user.name} - {user.userName}
           </li>
         ))}
       </ol>

@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client-ts"
-  output   = "./generated"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -9,89 +8,145 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  password     String
-  fullName     String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  role         Role          @default(USER)
-  userName     String        @default("")
-  profile      Profile?
-  transactions Transaction[]
+  id            String          @id @default(cuid())
+  name          String?
+  email         String
+  password      String
+  userName      String
+  emailVerified DateTime?
+  role          Role            @default(USER)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  accounts      Account[]
+  Authenticator Authenticator[]
+  profile       Profile?
+  sessions      Session[]
+  Transaction   Transaction[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
 }
 
 model Profile {
-  id        Int        @id @default(autoincrement())
-  userId    Int        @unique
-  bio       String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  portfolio Portfolio?
-  user      User       @relation(fields: [userId], references: [id])
-}
+  userId      String     @unique
+  Name        String?
+  email       String     @unique
+  bio         String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  portfolioId String?
+  Portfolio   Portfolio?
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-model Stock {
-  id              Int              @id @default(autoincrement())
-  stockId         Int              @unique
-  ticker          String           @unique
-  companyName     String?
-  currentPrice    Decimal          @default(0.00) @db.Money
-  openPrice       Decimal          @default(0.00) @db.Money
-  dayHigh         Decimal          @default(0.00) @db.Money
-  dayLow          Decimal          @default(0.00) @db.Money
-  dailyVolume     Int              @default(0)
-  createdAt       DateTime         @default(now())
-  initialVolume   Int
-  updatedAt       DateTime         @updatedAt
-  portfolioStocks PortfolioStock[]
-  Transaction     Transaction[]
+  @@id([userId, email])
 }
 
 model Portfolio {
-  id           Int              @id @default(autoincrement())
-  cash         Decimal          @default(0.00) @db.Money
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  totalValue   Decimal          @default(0.00) @db.Money
-  userId       Int              @unique
-  user         Profile          @relation(fields: [userId], references: [id])
-  stocks       PortfolioStock[]
+  id           String          @id @default(cuid())
+  cash         Decimal         @default(0.00) @db.Money
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  totalValue   Decimal         @default(0.00) @db.Money
+  profileId    String          @unique
+  user         Profile         @relation(fields: [profileId], references: [userId], onDelete: Cascade)
+  stocks       PortfolioStock?
   transactions Transaction[]
 }
 
-model PortfolioStock {
-  id          Int       @id @default(autoincrement())
-  portfolioId Int
-  stockId     Int
-  quantity    Int       @default(0)
-  averageCost Decimal   @default(0.00) @db.Money
-  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
-  stock       Stock     @relation(fields: [stockId], references: [id])
-
-  @@unique([portfolioId, stockId])
+model Stock {
+  id              String          @id @default(cuid())
+  stockId         String          @unique
+  ticker          String          @unique
+  companyName     String?
+  currentPrice    Decimal         @default(0.00) @db.Money
+  openPrice       Decimal         @default(0.00) @db.Money
+  dayHigh         Decimal         @default(0.00) @db.Money
+  dayLow          Decimal         @default(0.00) @db.Money
+  dailyVolume     Int             @default(0)
+  createdAt       DateTime        @default(now())
+  initialVolume   Int
+  updatedAt       DateTime        @updatedAt
+  portfolioStocks PortfolioStock?
+  transactions    Transaction[]
 }
 
 model Transaction {
-  id          Int          @id @default(autoincrement())
-  userId      Int
+  id          String       @id @default(cuid())
+  userId      String
   type        TransactType
-  stockId     Int?
-  quantity    Int?
+  stockId     String?
+  quantity    Int          @default(1)
   amount      Decimal      @default(0.00) @db.Money
   createdAt   DateTime     @default(now())
-  portfolioId Int
-  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id])
-  stock       Stock?       @relation(fields: [stockId], references: [id])
-  User        User         @relation(fields: [userId], references: [id])
+  portfolioId String
+  portfolio   Portfolio    @relation(fields: [portfolioId], references: [profileId], onDelete: Cascade)
+  stock       Stock?       @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PortfolioStock {
+  id          String    @id @default(cuid())
+  portfolioId String    @unique
+  stockId     String    @unique
+  quantity    Int       @default(0)
+  averageCost Decimal   @default(0.00) @db.Money
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  stock       Stock     @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
 }
 
 model MarketSchedule {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(cuid())
   marketOpen Boolean   @default(false)
   startTime  DateTime?
   endTime    DateTime?
-  holiday    Boolean   @default(false)
+  holiday    String[]  @default(["Labor Day", "Thanksgiving", "Christmas", "New Year's Day", "Independence Day", "Memorial Day", "Veterans Day", "Martin Luther King Jr. Day", "Presidents' Day", "Columbus Day"])
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }

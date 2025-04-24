@@ -24,7 +24,6 @@ export default function TransactionHistory() {
             </tr>
           </thead>
           <tbody>
-            {/* <!-- The table needs to be populated from the database, such as with JavaScript --> */}
           </tbody>
         </table>
         <p>Balance as of {/* <!-- script for pulling the date --> */}</p>

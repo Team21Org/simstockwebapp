@@ -7,6 +7,12 @@ import Link from "next/link";
 export default function Index() {
   return (
     <>
+      <Head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
+        <title>Stock Sim | Home Page</title>
+      </Head>
       <h3>Home</h3>
       <h4>Welcome To Sim Stock! Where Simple Investments Score Big</h4>
       <Image

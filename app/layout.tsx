@@ -18,10 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html>
       <Head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
-        <title>Stock Sim</title>
+        <title>SimStock</title>
       </Head>
       <body>
         <div>
@@ -34,7 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               height={110}
             />
           </Link>
-          <h1 className="simulatortitle"> Stock Trading System Simulator</h1>
+          <h1>Stock Trading System Simulator</h1>
           <h2>By Team 21</h2>
           <h2>Sam Kline, Michael Lacey, Josien Lajoie</h2>
           <div className="navbar">
@@ -54,13 +51,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
             <div className="dropdown">
-              {/*!-- check if user is administrator to reveal Hidden attributes --*/}
               <button hidden className="dropbtn">
                 Edit
               </button>
               <div className="dropdown-content">
-                {/* <Link href="/editmarket">Edit Market</Link> */}
-                {/* <Link href="/editschedule">Edit Schedule</Link> */}
               </div>
             </div>
           </div>

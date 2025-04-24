@@ -1,38 +1,50 @@
 import Head from "next/head";
 // import Image from 'next/image';
 // import Link from "next/link";
+import { auth } from "../../auth";
 import prisma from "../lib/prisma";
-import Form from "next/form";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export default async function Profile() {
-  async function fetchUserProfile() {
-    "use server";
-    // Fetch user profile data from the database
-    const user = await prisma.user.findFirst();
-    return user;
+  // Get the session
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    return (
+      <div>
+        <p>You must be logged in to view this page.</p>
+      </div>
+    );
   }
 
-  const userProfile = await fetchUserProfile();
+  // Query the database using the session email
+  const user = await prisma.user.findFirst({
+    where: { email: session.user.email },
+    include: {
+      profile: {
+        include: {
+          Portfolio: true, // Include Portfolio to get account details
+        },
+      },
+    },
+  });
+
+  // Extract user details
+  const userName = user?.userName || "N/A";
+  const accountNumber = user?.profile?.portfolioId || "N/A";
+  const accountBalance = user?.profile?.Portfolio?.cash || 0;
 
   return (
     <>
       <Head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <title>Stock Sim | Profile</title>
       </Head>
       <div>
-        <div></div>
         <h3>Profile</h3>
-        <p>Name: </p>
-        <p>Username: </p>
-        <p>E-Mail Address:</p>
-        <p>Account Number: </p>
-        <p>Account Balance: </p>
-        {/* <!--javascript to pull user information from the database. Organize into table, maybe --> */}
+        <p>Name: {session?.user.name}</p>
+        <p>Username: {userName}</p>
+        <p>E-Mail Address: {session?.user.email}</p>
+        <p>Account Number: {accountNumber}</p>
+        <p>Account Balance: ${accountBalance}</p>
       </div>
     </>
   );
