@@ -64,8 +64,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                 <button className="dropbtn">Admin</button>
                 <div className="dropdown-content">
                   <Link href="/admin/changeschedule">Change Schedule</Link>
-                  <Link href="/admin/marketdata">Create Stock</Link>
-                  <Link href="/admin/marketdata">Manage Users</Link>
+                  <Link href="/admin/createstock">Create Stock</Link>
+                  <Link href="/admin/manageusers">Manage Users</Link>
                 </div>
               </div>
             )}
