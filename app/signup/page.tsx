@@ -25,12 +25,12 @@ export default async function SignUp({
     const authSecret = process.env.AUTH_SECRET;
 
     if (password !== confirmPassword) {
-      redirect("/signup?error=Passwords do not match.");
+      await redirect("/signup?error=Passwords do not match.");
     }
 
     // Check if emails match
     if (email !== confirmEmail) {
-      redirect("/signup?error=Email addresses do not match.");
+      await redirect("/signup?error=Email addresses do not match.");
     }
 
     const hashedPassword = bcrypt.hashSync(password + authSecret, 10);
