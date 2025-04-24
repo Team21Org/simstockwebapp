@@ -1,6 +1,9 @@
+// ./app/profile/portfolio/page.tsx
+
 import Head from "next/head";
 // import Image from 'next/image';
 // import Link from "next/link";
+import prisma from "../../lib/prisma";
 
 export default function Portfolio() {
   return (
@@ -26,10 +29,9 @@ export default function Portfolio() {
               <th>Opening Price</th>
             </tr>
           </thead>
-          <tbody>
-          </tbody>
+          <tbody></tbody>
         </table>
-        <p>Account Balance</p>
+        <p>Trade</p>
       </div>
     </>
   );

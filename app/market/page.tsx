@@ -1,4 +1,4 @@
-// src/app/page.js
+// ./app/market/page.tsx
 
 // Project: Stock Trading System Simulator
 // Display Create Stock Page
@@ -18,9 +18,19 @@ export default async function CreateStock() {
     const initialVolume = parseInt(formData.get("Daily Volume") as string);
     const openPrice = parseFloat(formData.get("Open Price") as string);
 
+    const lastStock = await prisma.stock.findFirst({
+      orderBy: {
+        stockId: "desc",
+      },
+    });
+
+    const nextStockId = lastStock
+      ? (parseInt(lastStock.stockId) + 1).toString()
+      : "1";
+
     await prisma.stock.create({
       data: {
-        stockId: Math.floor(Math.random() * 1000000), // Example: Generate a random stock ID
+        stockId: nextStockId,
         ticker,
         companyName,
         initialVolume,
