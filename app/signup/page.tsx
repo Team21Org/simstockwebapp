@@ -7,12 +7,16 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 
-export default async function SignUp() {
+export default async function SignUp({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
   async function createUser(formData: FormData) {
     "use server";
 
     const email = formData.get("E-Mail address") as string;
-    const confirmEmail = formData.get("Confirm E-Mail Address");
+    const confirmEmail = formData.get("Confirm E-Mail Address") as string;
     const password = formData.get("Password") as string;
     const confirmPassword = formData.get("Confirm Password") as string;
     const name = formData.get("Full Name") as string;
@@ -21,22 +25,25 @@ export default async function SignUp() {
     const authSecret = process.env.AUTH_SECRET;
 
     if (password !== confirmPassword) {
-      throw new Error("Passwords do not match.");
-      wai;
+      redirect("/signup?error=Passwords do not match.");
+    }
+
+    // Check if emails match
+    if (email !== confirmEmail) {
+      redirect("/signup?error=Email addresses do not match.");
     }
 
     const hashedPassword = bcrypt.hashSync(password + authSecret, 10);
 
-    if (email == confirmEmail && password == confirmPassword) {
-      await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name: name,
-          userName: user,
-        },
-      });
-    }
+    // Create user if validations pass
+    await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name: name,
+        userName: user,
+      },
+    });
 
     revalidatePath("/signup");
     redirect("/signup");
@@ -53,6 +60,11 @@ export default async function SignUp() {
       </Head>
       <h3>Sign-Up</h3>
       <h1 className="text-2xl font-bold mb-4">Sign Up Now!</h1> <br />
+      {searchParams.error && (
+        <div className="text-red-500 mb-4">
+          <p>{searchParams.error}</p>
+        </div>
+      )}
       <Form action={createUser}>
         <div>
           <label htmlFor="E-Mail Address">E-Mail Address</label>
