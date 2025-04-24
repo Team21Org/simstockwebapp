@@ -1,6 +1,5 @@
-// ./app/profile/portfolio/page.tsx
-
 import Head from "next/head";
+<<<<<<< HEAD
 import prisma from "../../lib/prisma";
 import { auth } from "../../../auth"; // Assuming you're using next-auth for authentication
 
@@ -88,6 +87,12 @@ export default async function Portfolio() {
     }
   }
 
+=======
+// import Image from 'next/image';
+import Link from "next/link";
+
+export default function Portfolio() {
+>>>>>>> bdbc4edfb41db3f00308df13545c9335db997520
   return (
     <>
       <Head>
@@ -111,6 +116,7 @@ export default async function Portfolio() {
             </tr>
           </thead>
           <tbody>
+<<<<<<< HEAD
             {Array.isArray(portfolio.stocks) &&
               portfolio.stocks.map((portfolioStock) => (
                 <tr key={portfolioStock.stockId}>
@@ -160,6 +166,32 @@ export default async function Portfolio() {
               ))}
           </tbody>
         </table>
+=======
+          </tbody>
+        </table>
+        <br />
+        <h3>Transaction History</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Transaction Type</th>
+              <th>Amount</th>
+              <th>Ticker Number</th>
+              <th>Quantity</th>
+              <th>Transaction Date</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <h3>Balance</h3>
+        <p>Current Balance:</p>
+        <div>
+          <Link className="btn" href="./balance">
+            Access Balance
+          </Link>
+        </div>
+>>>>>>> bdbc4edfb41db3f00308df13545c9335db997520
       </div>
     </>
   );
