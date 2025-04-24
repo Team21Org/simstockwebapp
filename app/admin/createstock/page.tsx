@@ -15,6 +15,7 @@ export default async function CreateStock() {
   if (!session?.user?.email) {
     return (
       <div>
+        <h3>Access Denied</h3>
         <p>You do not have permission to access this page.</p>
       </div>
     );
@@ -28,6 +29,7 @@ export default async function CreateStock() {
   if (!user || user.role !== "ADMIN") {
     return (
       <div>
+        <h3>Access Denied</h3>
         <p>You do not have permission to access this page.</p>
       </div>
     );
