@@ -45,9 +45,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <div className="dropdown-content">
                 <Link href="/profile">Profile</Link>
                 <Link href="/profile/portfolio">Portfolio</Link>
-                <Link href="/profile/portfolio/transaction-history">
-                  Transaction History
-                </Link>
               </div>
             </div>
             <div className="dropdown">
