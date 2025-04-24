@@ -1,51 +1,55 @@
 import Head from "next/head";
-// import Image from 'next/image';
-// import Link from "next/link";
 import { auth } from "../../auth";
 import prisma from "../lib/prisma";
 
 export default async function Profile() {
-  // Get the session
   const session = await auth();
 
+  let content;
+
   if (!session?.user?.email) {
-    return (
+    content = (
       <div>
-        <p>You must be logged in to view this page.</p>
+        <h1>You must be logged in to view this page.</h1>
       </div>
     );
-  }
-
-  // Query the database using the session email
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: {
-      profile: {
-        include: {
-          Portfolio: true, // Include Portfolio to get account details
+  } else {
+    const user = await prisma.user.findFirst({
+      where: { email: session.user.email },
+      include: {
+        profile: {
+          include: {
+            Portfolio: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  // Extract user details
-  const userName = user?.userName || "N/A";
-  const accountNumber = user?.profile?.portfolioId || "N/A";
-  const accountBalance = user?.profile?.Portfolio?.cash || 0;
+    const userName = user?.userName || "N/A";
+    const accountNumber = user?.profile?.portfolioId || "N/A";
+    const accountBalance = user?.profile?.Portfolio?.cash || 0;
 
-  return (
-    <>
-      <Head>
-        <title>Stock Sim | Profile</title>
-      </Head>
-      <div>
-        <h3>Profile</h3>
+    content = (
+      <div id="profileInfo">
         <p>Name: {session?.user.name}</p>
         <p>Username: {userName}</p>
         <p>E-Mail Address: {session?.user.email}</p>
         <p>Account Number: {accountNumber}</p>
-        <p>Account Balance: ${accountBalance.toFixed(2)}</p>
+        <p>Account Balance: ${accountBalance}</p>
       </div>
+    );
+  }
+
+  return (
+    <>
+      <Head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
+        <title>Stock Sim | Profile</title>
+      </Head>
+        <h3>Profile</h3>
+      {content}
     </>
   );
 }
