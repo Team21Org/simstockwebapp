@@ -8,6 +8,7 @@ import Link from "next/link";
 import Head from "next/head";
 import prisma from "./lib/prisma";
 import { auth } from "../auth";
+import Logout from "./lib/actions";
 
 export const metadata = {
   title: "Sim Stock",
@@ -16,7 +17,11 @@ export const metadata = {
 
 import { ReactNode } from "react";
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const session = await auth();
 
   const user = session?.user?.email
@@ -27,6 +32,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     : null;
 
   const isAdmin = user?.role === "ADMIN";
+
+  // Server Components do not have access to the current pathname.
+  // Use "/" as a safe default, or move this logic to a Client Component if you need the real path.
+  const from = "/";
 
   return (
     <html>
@@ -48,8 +57,17 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <h2>By Team 21</h2>
           <h2>Sam Kline, Michael Lacey, Josien Lajoie</h2>
           <div className="navbar">
-          <Link className="logOut" href="/logout"> Log Out </Link>
-            <Link className="login" href="/login"> Log In </Link>
+            <Link
+              className="logout"
+              href={`/logout?from=${encodeURIComponent(from)}`}
+            >
+              {" "}
+              Log Out{" "}
+            </Link>
+            <Link className="login" href="/login">
+              {" "}
+              Log In{" "}
+            </Link>
             <Link href="/market/schedule">View Schedule</Link>
             <Link href="/market">View Market</Link>
             <div className="dropdown">

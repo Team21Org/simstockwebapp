@@ -138,11 +138,12 @@ const config: runtime.GetPrismaClientConfig = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiOTI4OWRhN2MtOTQxNS00NGNjLWI2ZmItYjc4MDNmMGIwODQ5IiwidGVuYW50X2lkIjoiODdmMjQ1Nzg4MTk1ZDk4NzkxZGY5NmEyMTE1Y2FmZTRmY2E2NmE0NGY2MjIxMTA5MjI0MTY1MzBjOTc0ODExNCIsImludGVybmFsX3NlY3JldCI6IjJhZDc4YTcyLWM2YWUtNGEyMy1hOTQ1LTllYzVmN2ZlOWM3NiJ9.CBa6lwf4hCzfAapCr1ua6tHWWB1b30fl8WR21DrhWfc"
+        "value": null
       }
     }
   },

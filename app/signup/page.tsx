@@ -6,8 +6,6 @@ import Form from "next/form";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
-
 export default async function SignUp({
   searchParams,
 }: {
