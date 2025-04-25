@@ -21,7 +21,7 @@ export default function Login() {
       alert("Invalid credentials");
     } else {
       alert("Login successful!");
-      window.location.href = "/profile"; 
+      window.location.href = "/profile";
     }
   };
 
@@ -34,28 +34,35 @@ export default function Login() {
         <title>Stock Sim | Login</title>
       </Head>
       <h3>Login</h3>
+      <div id="loginBody">
+        <form
+          id="loginForm"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target as HTMLFormElement);
+            await handleSubmit(formData);
+          }}
+        >
+          <label id="loginFormTitle">
+            {" "}
+            Your Investment Success Is Waiting!
+          </label>
+          <label id="loginBox">
+            <input name="email" type="email" placeholder="Email" />
+          </label>
 
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const formData = new FormData(e.target as HTMLFormElement);
-          await handleSubmit(formData);
-        }}
-      >
-        <label>
-          Email
-          <input name="email" type="email" />
-        </label>
-        <label>
-          Password
-          <input name="password" type="password" />
-        </label>
-        <button>Sign In</button>
-      <Link id="accbtn" href="/signup">
-          {" "}
-          No Account? Make One Here!{" "}
-        </Link>
-      </form>
+          <div>
+            <label id="loginBox">
+              <input name="password" type="password" placeholder="Password" />
+            </label>
+          </div>
+          <button id="accbtn">Sign In</button>
+          <Link id="accbtn2" href="/signup">
+            {" "}
+            No Account? Make One Here!{" "}
+          </Link>
+        </form>
+      </div>
     </div>
   );
 }
