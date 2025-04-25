@@ -11,6 +11,8 @@ export default async function ViewMarket() {
   const session = await auth();
   let content;
 
+  const stocks = await prisma.stock.findMany();
+
   if (!session?.user?.email) {
     content = (
       <div>
@@ -18,9 +20,7 @@ export default async function ViewMarket() {
       </div>
     );
   } else {
-    const marketSchedule = await prisma.marketSchedule.findUnique({
-      where: { id: "1" },
-    });
+    const marketSchedule = await prisma.marketSchedule.findFirst({});
 
     if ( !marketSchedule || !marketSchedule.startTime || !marketSchedule.endTime ) {
       content = (
@@ -31,26 +31,30 @@ export default async function ViewMarket() {
     } else {
       const now = new Date();
 
-      // Parse startTime and endTime as Date objects
+      const isWeekend = now.getDay() === 0 || now.getDay() === 6; //comment out the 0 to record on sunday
+
       const startTime = new Date(marketSchedule.startTime);
       const endTime = new Date(marketSchedule.endTime);
 
-      // Check if the current time is within market hours
-      const isMarketOpen = now >= startTime && now <= endTime;
+      console.log("Current Time (now):", now);
+      console.log("Market Start Time (startTime):", startTime);
+      console.log("Market End Time (endTime):", endTime);
+
+      const isMarketOpen = !isWeekend && (now >= startTime) && (now <= endTime);
 
       if (!isMarketOpen) {
         content = (
           <div>
             <h1>The market is currently closed.</h1>
             <p>
-              Market hours:{" "}
-              {startTime.toLocaleTimeString()} - {endTime.toLocaleTimeString()}
+              {isWeekend
+                ? "The market is closed on weekends."
+                : `Market hours: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`}
             </p>
           </div>
         );
-        
+
       } else {
-        const stocks = await prisma.stock.findMany();
 
         content = (
           <>
