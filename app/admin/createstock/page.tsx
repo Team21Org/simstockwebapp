@@ -53,8 +53,8 @@ export default async function CreateStock() {
       },
     });
 
-    revalidatePath("/market");
-    redirect("/market");
+    revalidatePath("/admin/createstock");
+    redirect("/admin/createstock");
   }
 
   const stocks = await prisma.stock.findMany();

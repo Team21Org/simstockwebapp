@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { auth } from "../../../auth";
 import prisma from "../../lib/prisma";
+import { redirect } from "next/navigation";
 
 export default async function ChangeSchedule() {
   const session = await auth();
@@ -48,8 +49,7 @@ export default async function ChangeSchedule() {
         endTime: new Date(`1970-01-01T${closingTime}:00`),
       },
     });
-
-    alert("Schedule updated successfully!");
+    redirect("/admin/changeschedule");
   }
 
   return (
@@ -65,12 +65,14 @@ export default async function ChangeSchedule() {
         <h3>Current Schedule</h3>
         {marketSchedule ? (
           <p>
-          Opening Time: {new Date(marketSchedule.startTime).toLocaleTimeString()} <br />
-          Closing Time: {new Date(marketSchedule.endTime).toLocaleTimeString()}
-        </p>
-      ) : (
-        <p>No schedule found.</p>
-      )}
+            Opening Time:{" "}
+            {new Date(marketSchedule.startTime).toLocaleTimeString()} <br />
+            Closing Time:{" "}
+            {new Date(marketSchedule.endTime).toLocaleTimeString()}
+          </p>
+        ) : (
+          <p>No schedule found.</p>
+        )}
         <h3>Change Schedule</h3>
         <form action={handleSubmit}>
           <label htmlFor="openingTime">Opening Time:</label>
