@@ -18,16 +18,17 @@ p {
 }
 
 /* Project Title in the Top Right */
-h1 {
+#projectTitle {
 	text-align: center;
-	float: none;
+	float: right;
+	padding-right: 10px;
 }
 
 /* Team Name and Member Names */
 h2 {
 	text-align: right;
 	font-size: 20px;
-	margin-top: -20px;
+	margin-top: -15px;
 	margin-right: 10px;
 }
 
@@ -37,8 +38,7 @@ h3 {
 	color: white;
 	margin-top: -2px;
 	padding: 12px;
-	margin-right: -12px;
-	margin-left: -8px;
+
 }
 
 /* Image Styles */ 
@@ -46,8 +46,8 @@ h3 {
 /* Logo in the Top Left */
 img.banner {
 	padding-top: 12px;
-	margin-bottom: -12px;
-	padding-left: 12px;
+	margin-bottom: -20px;
+	padding-left: 15px;
 	width: auto;
 	height: auto;
 }
@@ -61,6 +61,7 @@ img.banner:hover {
 	background-color: #44457E;
 	color: white;
 	padding: 12px;
+	padding-left: 20px;
 	font-size: 16px;
 	text-decoration: none;
 
@@ -70,7 +71,7 @@ img.banner:hover {
 .dropbtn {
 	background-color: #44457E;
 	color: white;
-	padding: 13px;
+	padding: 12px;
 	font-size: 16px;
 	border: none;
 }
@@ -149,24 +150,33 @@ tr:hover {
 
 /*<<<<<<<<< SPECIFIC PAGE STYLES  >>>>>>>>>>>>>/*
 
-/* Homepage */
+/*<<<<<<<<< HOMEPAGE STYLES >>>>>>>>>>>*/
 
 /*HomePage Tagline */
-h4 {
+#homeTitle {
 	font-size: 50px;
 	font-family: "Poppins", sans-serif;
 	margin:50px 0px 30px 0px;
 	color:#AC7EF8;
 	text-shadow: 1px 2px 2px black;
+	padding-left: 3%;
 }
 
+#homeTitle2 {
+	font-size: 50px;
+	font-family: "Poppins", sans-serif;
+	margin:50px 0px 30px 0px;
+	color:#AC7EF8;
+	text-shadow: 1px 2px 2px black;
+	padding-left: 20%;
+}
 /*Stock Image Shadow + Position*/
 #homeimg {
 	box-shadow: 0 4px 8px 0 black, 0 6px 10px 0 black;
 	float:right;
-	margin-right: 5%;
+	margin-top: -20px;
+	margin-right: 3%;
 	border-radius: 20px;
-	width: 40%;
 	clip-path: ellipse(100% 100% at right);
 }
 
@@ -174,13 +184,15 @@ h4 {
 #hometxt {
 	line-height: 35px; 
 	text-align: center;
-	font-family: sans-serif;
+	font-family: "Poppins", sans-serif;
+	font-size: 20px;
 }
 
 /* Avatar Logo */
 #homeimg2 {
 	max-width: 5%;
 	float:left;
+	padding-left: 2%;
 }
 
 /* Stock Market Logo */
@@ -188,11 +200,6 @@ h4 {
 	max-width: 5%;
 	float:left;
 	margin-left: 3%;
-}
-
-/* Centered Purple Text */
-#h4alt1 {
-	text-align: center;
 }
 
 /* Purple Button Links + Text */
@@ -210,9 +217,44 @@ h4 {
 #h4alt2:hover {
 	background-color: #494c4e;
 }
+/*<<<<<<<<< END OF HOMEPAGE STYLES >>>>>>>>>>>*/
 
+/*<<<<<<<<< PROFILE PAGE STYLES >>>>>>>>>>>>>>>*/
+#profileInfo {
+	padding-left: 10px;
+}
 
-/* Login-In Page */
+/*<<<<<<<<< END OF PROFILE PAGE STYLES >>>>>>>>>>>>>>>*/
+
+/*<<<<<<<<< MARKET PAGE STYLES >>>>>>>>>>>>>>>*/
+#addStockTxt {
+	padding-left: 5px;
+}
+
+#addStockForm label {
+	padding-left: 10px;
+	padding-right: 15px;
+
+}
+
+#addStockForm button {
+	margin-left: 10px;
+}
+
+#stockList {
+	font-family: "Poppins", sans-serif;
+	text-align: center;
+	float:left;
+	padding-top: 25px;
+	padding-left: 15px;
+}
+
+#stockTable {
+	margin-top: 25px;
+	background-color: #AC7EF8;
+}
+
+/*<<<<<<<<< lOGIN PAGE STYLES >>>>>>>>>>>*/
 
 /*Login-Form Style */
 #loginform {
