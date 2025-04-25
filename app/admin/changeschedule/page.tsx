@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { auth } from "../../../auth";
 import prisma from "../../lib/prisma";
+import { redirect } from "next/navigation";
 
 export default async function ChangeSchedule() {
   const session = await auth();
@@ -48,8 +49,7 @@ export default async function ChangeSchedule() {
         endTime: new Date(`1970-01-01T${closingTime}:00`),
       },
     });
-
-    alert("Schedule updated successfully!");
+    redirect("/admin/changeschedule");
   }
 
   return (
