@@ -8,7 +8,6 @@ import Link from "next/link";
 import Head from "next/head";
 import prisma from "./lib/prisma";
 import { auth } from "../auth";
-import Logout from "./lib/actions";
 
 export const metadata = {
   title: "Sim Stock",
