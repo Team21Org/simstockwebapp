@@ -35,7 +35,7 @@ export default async function Profile() {
         <p>Username: {userName}</p>
         <p>E-Mail Address: {session?.user.email}</p>
         <p>Account Number: {accountNumber}</p>
-        <p>Account Balance: ${accountBalance}</p>
+        <p>Account Balance: ${accountBalance.toString()}</p>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default async function Profile() {
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <title>Stock Sim | Profile</title>
       </Head>
-        <h3>Profile</h3>
+      <h3>Profile</h3>
       {content}
     </>
   );

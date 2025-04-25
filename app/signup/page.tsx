@@ -6,12 +6,13 @@ import Form from "next/form";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-
 export default async function SignUp({
   searchParams,
 }: {
   searchParams: { error?: string };
 }) {
+  const error = searchParams?.error;
+
   async function createUser(formData: FormData) {
     "use server";
 
@@ -60,9 +61,9 @@ export default async function SignUp({
       </Head>
       <h3>Sign-Up</h3>
       <h1 className="text-2xl font-bold mb-4">Sign Up Now!</h1> <br />
-      {searchParams.error && (
+      {error && (
         <div className="text-red-500 mb-4">
-          <p>{searchParams.error}</p>
+          <p>{error}</p>
         </div>
       )}
       <Form action={createUser}>
