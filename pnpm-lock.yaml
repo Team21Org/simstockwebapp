@@ -20,6 +20,9 @@ importers:
       '@prisma/extension-optimize':
         specifier: ^1.1.8
         version: 1.1.8(@prisma/client@6.6.0(prisma@6.6.0(typescript@5.8.3))(typescript@5.8.3))
+      '@prisma/instrumentation':
+        specifier: ^6.6.0
+        version: 6.6.0(@opentelemetry/api@1.9.0)
       '@tailwindcss/postcss':
         specifier: ^4.1.4
         version: 4.1.4
@@ -42,8 +45,8 @@ importers:
         specifier: 5.0.0-beta.26
         version: 5.0.0-beta.26(next@15.3.1(@babel/core@7.26.10)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       node:
-        specifier: ^23.11.0
-        version: 23.11.0
+        specifier: ^22.15.0
+        version: 22.15.0
       prisma:
         specifier: ^6.6.0
         version: 6.6.0(typescript@5.8.3)
@@ -889,6 +892,11 @@ packages:
 
   '@prisma/instrumentation@6.1.0':
     resolution: {integrity: sha512-mNdBeKOvKeXWFmowPNVEciGzpWjd7o3hkTVZmbjuMhA1ZHQksS3Am4HposiAmvqpuYnCJ2h79sJsv2kW0CqlDg==}
+    peerDependencies:
+      '@opentelemetry/api': ^1.8
+
+  '@prisma/instrumentation@6.6.0':
+    resolution: {integrity: sha512-M/a6njz3hbf2oucwdbjNKrSMLuyMCwgDrmTtkF1pm4Nm7CU45J/Hd6lauF2CDACTUYzu3ymcV7P0ZAhIoj6WRw==}
     peerDependencies:
       '@opentelemetry/api': ^1.8
 
@@ -2588,8 +2596,8 @@ packages:
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
 
-  node@23.11.0:
-    resolution: {integrity: sha512-IS7dwB4M8/iKCFuJVN4EQmMmpX1YLN/wLfkgcouPA99s9cQUpuUX7Ng0j0XIK+4Zhb4EhcDyea5P20hF26nVow==}
+  node@22.15.0:
+    resolution: {integrity: sha512-qrOEL83lNt+Jbh9pekl5xQrZK+QRJz51m2IGGCu2NENgbG6Go0D1QUBvjbejP8jB2eokQpX1AorDLbKQ/FxuYA==}
     engines: {npm: '>=5.0.0'}
     hasBin: true
 
@@ -4100,6 +4108,13 @@ snapshots:
       - supports-color
 
   '@prisma/instrumentation@6.1.0(@opentelemetry/api@1.9.0)':
+    dependencies:
+      '@opentelemetry/api': 1.9.0
+      '@opentelemetry/instrumentation': 0.53.0(@opentelemetry/api@1.9.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@prisma/instrumentation@6.6.0(@opentelemetry/api@1.9.0)':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.53.0(@opentelemetry/api@1.9.0)
@@ -6150,7 +6165,7 @@ snapshots:
 
   node-releases@2.0.19: {}
 
-  node@23.11.0:
+  node@22.15.0:
     dependencies:
       node-bin-setup: 1.1.3
 

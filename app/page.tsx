@@ -14,7 +14,7 @@ export default function Index() {
         <title>Stock Sim | Home Page</title>
       </Head>
       <h3>Home</h3>
-      <h4>Welcome To Sim Stock! Where Simple Investments Score Big</h4>
+      <h4 id="homeTitle">Welcome To Sim Stock! Where Simple Investments Score Big</h4>
       <Image
         id="homeimg"
         src="/homepage.jpeg"
@@ -34,7 +34,7 @@ export default function Index() {
         success and build confidence to navigate the market efficiently with its
         user-friendly interface.
       </p>
-      <h4 id="h4alt1">Ready To Start? </h4>
+      <h4 id="homeTitle2">Ready To Start? </h4>
       <Image
         id="homeimg2"
         src="/profileicon.png"
