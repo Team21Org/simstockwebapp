@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { auth } from "../../../auth";
 import prisma from "../../lib/prisma";
+import { redirect } from "next/navigation";
 
 export default async function ManageUsers() {
   const session = await auth();
@@ -27,6 +28,26 @@ export default async function ManageUsers() {
       </div>
     );
   }
+
+  // Fetch users from the database
+  const fetchedUsers = await prisma.user.findMany();
+
+  async function roleChange(formData: FormData) {
+    "use server";
+    const userId = formData.get("userId") as string;
+    const newRole = formData.get("roles") as string;
+
+    if (newRole !== "ADMIN" && newRole !== "USER") {
+      throw new Error("Invalid role value");
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { role: newRole },
+    });
+    redirect("/admin/manageusers");
+  }
+
   return (
     <>
       <Head>
@@ -37,7 +58,41 @@ export default async function ManageUsers() {
       </Head>
       <div>
         <h3>Manage Users</h3>
-        <p>There is currenty no data to display.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Username</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fetchedUsers.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.userName}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>
+                  <form action={roleChange}>
+                    <select name="roles" defaultValue={user.role}>
+                      <option value="ADMIN">ADMIN</option>
+                      <option value="USER">USER</option>
+                    </select>
+                    <input type="hidden" name="userId" value={user.id} />
+                    <button type="submit">Change Role</button>
+                  </form>
+                </td>
+                <td>{user.createdAt.toString()}</td>
+                <td>{user.updatedAt.toString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );

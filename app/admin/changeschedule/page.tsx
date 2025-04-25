@@ -49,7 +49,7 @@ export default async function ChangeSchedule() {
       },
     });
 
-    alert("Schedule updated successfully!");
+    return;
   }
 
   return (
@@ -65,12 +65,14 @@ export default async function ChangeSchedule() {
         <h3>Current Schedule</h3>
         {marketSchedule ? (
           <p>
-          Opening Time: {new Date(marketSchedule.startTime).toLocaleTimeString()} <br />
-          Closing Time: {new Date(marketSchedule.endTime).toLocaleTimeString()}
-        </p>
-      ) : (
-        <p>No schedule found.</p>
-      )}
+            Opening Time:{" "}
+            {new Date(marketSchedule.startTime).toLocaleTimeString()} <br />
+            Closing Time:{" "}
+            {new Date(marketSchedule.endTime).toLocaleTimeString()}
+          </p>
+        ) : (
+          <p>No schedule found.</p>
+        )}
         <h3>Change Schedule</h3>
         <form action={handleSubmit}>
           <label htmlFor="openingTime">Opening Time:</label>
