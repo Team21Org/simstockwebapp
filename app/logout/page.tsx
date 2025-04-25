@@ -1,4 +1,4 @@
-import Logout from "../lib/actions";
+import { Logout } from "../lib/actions";
 
 export default async function LogoutPage({
   searchParams,

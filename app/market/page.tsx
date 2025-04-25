@@ -20,9 +20,13 @@ export default async function ViewMarket() {
       </div>
     );
   } else {
-    const marketSchedule = await prisma.marketSchedule.findFirst({});
+    const marketSchedule = await prisma.marketSchedule.findFirst();
 
-    if ( !marketSchedule || !marketSchedule.startTime || !marketSchedule.endTime ) {
+    if (
+      !marketSchedule ||
+      !marketSchedule.startTime ||
+      !marketSchedule.endTime
+    ) {
       content = (
         <div>
           <h1>Market schedule is not properly configured.</h1>
@@ -40,7 +44,7 @@ export default async function ViewMarket() {
       console.log("Market Start Time (startTime):", startTime);
       console.log("Market End Time (endTime):", endTime);
 
-      const isMarketOpen = !isWeekend && (now >= startTime) && (now <= endTime);
+      const isMarketOpen = !isWeekend && now >= startTime && now <= endTime;
 
       if (!isMarketOpen) {
         content = (
@@ -53,9 +57,7 @@ export default async function ViewMarket() {
             </p>
           </div>
         );
-
       } else {
-
         content = (
           <>
             <div className="w-full max-w-md">

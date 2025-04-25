@@ -124,14 +124,9 @@ async function main() {
   });
 
   // Create Market Schedule
-  await prisma.marketSchedule.upsert({
-    where: { id: "main" },
-    update: {
-      startTime: new Date("1970-01-01T09:00:00Z"),
-      endTime: new Date("1970-01-01T17:00:00Z"),
-    },
-    create: {
-      id: "main",
+  await prisma.marketSchedule.create({
+    data: {
+      id: "1",
       startTime: new Date("1970-01-01T09:00:00Z"),
       endTime: new Date("1970-01-01T17:00:00Z"),
     },
