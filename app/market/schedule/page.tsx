@@ -18,24 +18,31 @@ export default async function Viewschedule() {
       </Head>
       <div>
         <h3>Daily Schedule</h3>
+        <h1 id="scheduleTitle"> Current Schedule </h1>
         {marketSchedule ? (
-          <p>
+          <p id="scheduleTxt">
           Opening Time: {new Date(marketSchedule.startTime).toLocaleTimeString()} <br />
-          Closing Time: {new Date(marketSchedule.endTime).toLocaleTimeString()}
+          Closing Time: {new Date(marketSchedule.endTime).toLocaleTimeString()} <br />
+          Open Monday - Friday
         </p>
       ) : (
         <p>No schedule found.</p>
       )}
       </div>
       <div>
-        <h3>Observed Holidays</h3>
+        <h1 id="holidayTitle">Observed Holidays</h1>
+        
+        <div className="holidayContainer">
         {marketSchedule?.holiday?.length > 0 ? (
           marketSchedule.holiday.map((holiday, index) => (
-            <p key={index}>{holiday}</p>
+            
+            
+            <p id="holidayTxt" key={index}>{holiday}</p>
           ))
         ) : (
           <p>No holidays found.</p>
         )}
+        </div>
       </div>
     </>
   );

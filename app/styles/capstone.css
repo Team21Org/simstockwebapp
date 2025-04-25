@@ -253,6 +253,64 @@ tr:hover {
 	margin-top: 25px;
 	background-color: #AC7EF8;
 }
+/*<<<<<<<<< END OF MARKET PAGE STYLES >>>>>>>>>>>>>>>*/
+
+/*<<<<<<<<< SCHEDULE PAGE STYLES >>>>>>>>>>>>>>>*/
+
+/* Title For Current Schedule */ 
+#scheduleTitle {
+	font-family: "Poppins", sans-serif;
+	font-size: 50px;
+	text-align: center;
+	max-width: 30%;
+	border-radius: 20px;
+	background-color:#AC7EF8;
+	color:white;
+
+	position: relative;
+	top: 30%;
+	left: 35%;
+}
+
+/* Schedule Times */
+#scheduleTxt {
+	font-family: "Bellota Text", sans-serif;
+	font-size: 25px;
+	text-align: center;
+}
+
+/* Title For Holidays */ 
+#holidayTitle {
+	font-family: "Poppins", sans-serif;
+	font-size: 50px;
+	text-align: center;
+	max-width: 30%;
+	border-radius: 20px;
+	background-color:#6169BB;
+	color:white;
+
+	position: relative;
+	top: 30%;
+	left: 35%;
+}
+
+.holidayContainer {
+	display: flex;
+	flex-wrap: wrap; /* allows wrapping to new lines if needed */
+	justify-content: center; /* center items horizontally */
+	gap: 30px; /* spacing between items */
+  }
+
+/* Holiday Days */ 
+#holidayTxt {
+	font-family: "Bellota Text", sans-serif;
+	font-size: 23px;
+	
+}
+
+/*<<<<<<<<< END OF SCHEDULE PAGE STYLES >>>>>>>>>>>>>>>*/
+
+
 
 /*<<<<<<<<< lOGIN PAGE STYLES >>>>>>>>>>>*/
 
