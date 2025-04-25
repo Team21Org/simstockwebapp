@@ -143,13 +143,12 @@ model PortfolioStock {
 }
 
 model MarketSchedule {
-  id         String    @id @default("1")
-  marketOpen Boolean   @default(false)
-  startTime  DateTime?
-  endTime    DateTime?
-  holiday    String[]  @default(["Labor Day", "Thanksgiving", "Christmas", "New Year's Day", "Independence Day", "Memorial Day", "Veterans Day", "Martin Luther King Jr. Day", "Presidents' Day", "Columbus Day"])
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id        String   @id
+  startTime DateTime @db.Time()
+  endTime   DateTime @db.Time()
+  holiday   String[] @default(["Labor Day", "Thanksgiving", "Christmas", "New Year's Day", "Independence Day", "Memorial Day", "Veterans Day", "Martin Luther King Jr. Day", "Presidents' Day", "Columbus Day"])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {

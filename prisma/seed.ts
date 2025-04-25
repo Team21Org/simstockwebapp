@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-
   const authSecret = process.env.AUTH_SECRET;
 
   const adminPassword = bcrypt.hashSync("adminPassword123" + authSecret, 10);
@@ -125,11 +124,16 @@ async function main() {
   });
 
   // Create Market Schedule
-  await prisma.marketSchedule.create({
-    data: {
-      marketOpen: true,
-      startTime: new Date("2023-01-01T09:30:00Z"),
-      endTime: new Date("2023-01-01T16:00:00Z"),
+  await prisma.marketSchedule.upsert({
+    where: { id: "main" },
+    update: {
+      startTime: new Date("1970-01-01T09:00:00Z"),
+      endTime: new Date("1970-01-01T17:00:00Z"),
+    },
+    create: {
+      id: "main",
+      startTime: new Date("1970-01-01T09:00:00Z"),
+      endTime: new Date("1970-01-01T17:00:00Z"),
     },
   });
 
