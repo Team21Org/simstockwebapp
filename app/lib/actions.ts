@@ -2,6 +2,7 @@ import { auth } from "../../auth";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { redirect } from "next/navigation";
 import prisma from "./prisma";
+import { MarketSchedule } from "@prisma/client";
 
 const session = await auth();
 export async function Logout({
@@ -16,7 +17,6 @@ export async function Logout({
 }
 
 // lib/marketUtils.ts
-import { MarketSchedule } from "@prisma/client";
 
 /**
  * Check if the current time is between the openTime and closeTime.
