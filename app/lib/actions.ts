@@ -25,6 +25,13 @@ export async function Logout({
  */
 export function isMarketOpen(schedule: MarketSchedule): boolean {
   const now = new Date();
+  const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+
+  // Market is closed on weekends
+  if (day === 0 || day === 6) {
+    return false;
+  }
+
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
   const [openHour, openMinute] = schedule.startTime.split(":").map(Number);
