@@ -126,8 +126,8 @@ async function main() {
   // Create Market Schedule
   await prisma.marketSchedule.create({
     data: {
-      startTime: "09:00:00",
-      endTime: "17:00:00",
+      startTime: "09:00",
+      endTime: "17:00",
     },
   });
 

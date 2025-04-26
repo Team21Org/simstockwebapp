@@ -143,8 +143,8 @@ model PortfolioStock {
 
 model MarketSchedule {
   id        Int      @id @default(autoincrement())
-  startTime String   @default("09:00:00")
-  endTime   String   @default("17:00:00")
+  startTime String   @default("09:00")
+  endTime   String   @default("17:00")
   holiday   String[] @default(["Labor Day", "Thanksgiving", "Christmas", "New Year's Day", "Independence Day", "Memorial Day", "Veterans Day", "Martin Luther King Jr. Day", "Presidents' Day", "Columbus Day"])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
