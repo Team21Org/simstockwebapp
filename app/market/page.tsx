@@ -7,7 +7,7 @@ import prisma from "../lib/prisma";
 import Head from "next/head";
 import { auth } from "../../auth";
 
-export default async function ViewMarket() {
+export default function ViewMarket() {
   const session = await auth();
   const stocks = await prisma.stock.findMany();
   const marketSchedule = await prisma.marketSchedule.findFirst();

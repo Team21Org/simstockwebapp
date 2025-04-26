@@ -4,17 +4,6 @@ import { MarketSchedule } from "@prisma/client";
 import prisma from "../lib/prisma";
 import bcrypt from "bcryptjs";
 
-export async function Logout({
-  searchParams,
-}: {
-  searchParams?: { from?: string };
-}) {
-  // If not logged in, redirect to login page
-  if (!session?.user?.email) {
-    redirect("/login");
-  }
-}
-
 // lib/marketUtils.ts
 
 /**
@@ -44,7 +33,6 @@ export function isMarketOpen(schedule: MarketSchedule): boolean {
 
 export async function registerUser({
   email,
-  confirmEmail,
   password,
   confirmPassword,
   name,
