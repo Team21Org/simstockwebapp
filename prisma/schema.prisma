@@ -89,31 +89,31 @@ model Profile {
 }
 
 model Portfolio {
-  id           String          @id @default(cuid())
-  cash         Decimal         @default(0.00) @db.Money
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  totalValue   Decimal         @default(0.00) @db.Money
-  profileId    String          @unique
-  user         Profile         @relation(fields: [profileId], references: [userId], onDelete: Cascade)
-  stocks       PortfolioStock?
+  id           String           @id @default(cuid())
+  cash         Decimal          @default(0.00) @db.Money
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  totalValue   Decimal          @default(0.00) @db.Money
+  profileId    String           @unique
+  user         Profile          @relation(fields: [profileId], references: [userId], onDelete: Cascade)
+  stocks       PortfolioStock[]
   transactions Transaction[]
 }
 
 model Stock {
-  id              String          @id @default(cuid())
-  stockId         String          @unique
-  ticker          String          @unique
+  id              String           @id @default(cuid())
+  stockId         String           @unique
+  ticker          String           @unique
   companyName     String?
-  currentPrice    Decimal         @default(0.00) @db.Money
-  openPrice       Decimal         @default(0.00) @db.Money
-  dayHigh         Decimal         @default(0.00) @db.Money
-  dayLow          Decimal         @default(0.00) @db.Money
-  dailyVolume     Int             @default(0)
-  createdAt       DateTime        @default(now())
+  currentPrice    Decimal          @default(0.00) @db.Money
+  openPrice       Decimal          @default(0.00) @db.Money
+  dayHigh         Decimal          @default(0.00) @db.Money
+  dayLow          Decimal          @default(0.00) @db.Money
+  dailyVolume     Int              @default(0)
+  createdAt       DateTime         @default(now())
   initialVolume   Int
-  updatedAt       DateTime        @updatedAt
-  portfolioStocks PortfolioStock?
+  updatedAt       DateTime         @updatedAt
+  portfolioStocks PortfolioStock[]
   transactions    Transaction[]
 }
 
@@ -126,19 +126,21 @@ model Transaction {
   amount      Decimal      @default(0.00) @db.Money
   createdAt   DateTime     @default(now())
   portfolioId String
-  portfolio   Portfolio    @relation(fields: [portfolioId], references: [profileId], onDelete: Cascade)
+  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   stock       Stock?       @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PortfolioStock {
-  id          String    @id @default(cuid())
-  portfolioId String    @unique
-  stockId     String    @unique
+  id          String    @id @default(uuid())
+  portfolioId String
+  stockId     String
   quantity    Int       @default(0)
   averageCost Decimal   @default(0.00) @db.Money
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   stock       Stock     @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
+
+  @@unique([portfolioId, stockId])
 }
 
 model MarketSchedule {

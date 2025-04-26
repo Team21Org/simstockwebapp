@@ -1,8 +1,9 @@
 import { auth } from "../../auth";
 import { redirect } from "next/navigation";
 import { MarketSchedule } from "@prisma/client";
+import prisma from "../lib/prisma";
+import bcrypt from "bcryptjs";
 
-const session = await auth();
 export async function Logout({
   searchParams,
 }: {
@@ -39,4 +40,53 @@ export function isMarketOpen(schedule: MarketSchedule): boolean {
   const closingMinutes = closeHour * 60 + closeMinute;
 
   return currentMinutes >= openingMinutes && currentMinutes <= closingMinutes;
+}
+
+export async function registerUser({
+  email,
+  confirmEmail,
+  password,
+  confirmPassword,
+  name,
+  userName,
+}: {
+  email: string;
+  confirmEmail: string;
+  password: string;
+  confirmPassword: string;
+  name: string;
+  userName: string;
+}) {
+  const authSecret = process.env.AUTH_SECRET;
+
+  if (password !== confirmPassword) {
+    throw new Error("Passwords do not match.");
+  }
+  if (email !== confirmEmail) {
+    throw new Error("Email addresses do not match.");
+  }
+
+  const hashedPassword = bcrypt.hashSync(password + authSecret, 10);
+
+  return prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+      name,
+      userName,
+      role: "USER",
+      profile: {
+        create: {
+          email,
+          bio: "",
+          Portfolio: {
+            create: {
+              cash: 0.0,
+              totalValue: 0.0,
+            },
+          },
+        },
+      },
+    },
+  });
 }

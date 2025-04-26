@@ -6,151 +6,162 @@
 import prisma from "../lib/prisma";
 import Head from "next/head";
 import { auth } from "../../auth";
-import { isMarketOpen } from "../lib/actions";
 
 export default async function ViewMarket() {
   const session = await auth();
-  let content;
-
   const stocks = await prisma.stock.findMany();
+  const marketSchedule = await prisma.marketSchedule.findFirst();
 
-  async function handleBuy(stock) {
-    try {
-      const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        include: {
-          profile: {
-            include: {
-              Portfolio: true,
-            },
-          },
-        },
-      });
+  // Server action for trading
+  async function tradeAction(formData: FormData) {
+    "use server";
+    const stockId = formData.get("stockId") as string;
+    const quantity = Number(formData.get("quantity"));
+    const type = formData.get("type") as "BUY" | "SELL";
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: { profile: { include: { Portfolio: true } } },
+    });
+    if (!user || !user.profile?.Portfolio) return;
 
-      //purchase errors
-      if (user?.profile?.Portfolio?.cash < stock.currentPrice) {
-        alert("Insufficient funds to buy this stock.");
-        return;
-      }
-      if (stock.initialVolume <= 0) {
-        alert("Stock is out of stock.");
-        return;
-      }
-      
-      //update the stock to remove one
+    const stock = await prisma.stock.findUnique({ where: { stockId } });
+    if (!stock) return;
+
+    const portfolioId = user.profile.Portfolio.id;
+    const portfolioStock = await prisma.portfolioStock.findUnique({
+      where: { portfolioId_stockId: { portfolioId, stockId } },
+    });
+
+    if (type === "BUY") {
+      const totalCost = Number(stock.currentPrice) * quantity;
+      if (Number(user.profile.Portfolio.cash) < totalCost)
+        throw new Error("Insufficient funds");
+      if (stock.initialVolume < quantity)
+        throw new Error("Not enough stock available");
+
+      // Update stock volume
       await prisma.stock.update({
-        where: { stockId: stock.stockId },
-        data: { initialVolume: stock.initialVolume - 1},
+        where: { stockId },
+        data: { initialVolume: stock.initialVolume - quantity },
       });
 
-      //update the portfolio to add the stock
-      await prisma.portfolio.upsert({
-        where: { id: { userId: user.id, stockId: stock.stockId } },
-        update: { quantity: { increment: 1 } },
-        create: { userId: user.id, stockId: stock.stockId, quantity: 1 },
-      });
+      // Update portfolio stock
+      if (portfolioStock) {
+        await prisma.portfolioStock.update({
+          where: { id: portfolioStock.id },
+          data: {
+            quantity: portfolioStock.quantity + quantity,
+            averageCost:
+              (Number(portfolioStock.averageCost) * portfolioStock.quantity +
+                totalCost) /
+              (portfolioStock.quantity + quantity),
+          },
+        });
+      } else {
+        await prisma.portfolioStock.create({
+          data: {
+            portfolioId,
+            stockId,
+            quantity,
+            averageCost: stock.currentPrice,
+          },
+        });
+      }
 
-      //update the portfolio to remove the cash
+      // Update cash
       await prisma.portfolio.update({
-        where: { id: user.profile.Portfolio.id },
+        where: { id: portfolioId },
+        data: { cash: Number(user.profile.Portfolio.cash) - totalCost },
+      });
+    } else if (type === "SELL") {
+      if (!portfolioStock || portfolioStock.quantity < quantity)
+        throw new Error("Not enough shares to sell");
+
+      // Update stock volume
+      await prisma.stock.update({
+        where: { stockId },
+        data: { initialVolume: stock.initialVolume + quantity },
+      });
+
+      // Update portfolio stock
+      await prisma.portfolioStock.update({
+        where: { id: portfolioStock.id },
+        data: { quantity: portfolioStock.quantity - quantity },
+      });
+
+      // Update cash
+      await prisma.portfolio.update({
+        where: { id: portfolioId },
         data: {
-          cash: Number(user.profile.Portfolio.cash) - stock.currentPrice,
+          cash:
+            Number(user.profile.Portfolio.cash) +
+            Number(stock.currentPrice) * quantity,
         },
       });
-
-  } catch (error) {}
-}
-
-  if (!session?.user?.email) {
-    content = (
-      <div>
-        <h1>You must be logged in to view this page.</h1>
-      </div>
-    );
-  } else {
-    const marketSchedule = await prisma.marketSchedule.findFirst();
-
-    if (
-      !marketSchedule ||
-      !marketSchedule.startTime ||
-      !marketSchedule.endTime
-    ) {
-      content = (
-        <div>
-          <h1>Market schedule is not properly configured.</h1>
-        </div>
-      );
-    } else {
-      if (!isMarketOpen) {
-        content = (
-          <>
-            <div>
-              <h1>The market is currently closed.</h1>
-            </div>
-          </>
-        );
-      } else {
-        content = (
-          <>
-            <div className="w-full max-w-md">
-              <h2 id="stockList">Stock List</h2>
-              <table id="stockTable" border={1} cellPadding={8}>
-                <thead>
-                  <tr>
-                    <th>ID#</th>
-                    <th>Stock Ticker</th>
-                    <th>Company Name</th>
-                    <th>Daily Volume</th>
-                    <th>Open Price</th>
-                    <th>Current Price</th>
-                    <th>Daily High</th>
-                    <th>Daily Low</th>
-                    <th>Purchase</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stocks.map((stock) => (
-                    <tr key={stock.stockId}>
-                      <td>{stock.stockId}</td>
-                      <td>{stock.ticker}</td>
-                      <td>{stock.companyName}</td>
-                      <td>{stock.initialVolume}</td>
-                      <td>${stock.openPrice.toFixed(2)}</td>
-                      <td>${stock.currentPrice.toFixed(2)}</td>
-                      <td>${stock.dayHigh.toFixed(2)}</td>
-                      <td>${stock.dayLow.toFixed(2)}</td>
-                      <td>
-                        {isMarketOpen && (
-                          <button
-                            onClick={() => handleBuy(stock)}
-                            disabled={stock.initialVolume <= 0}
-                          >
-                            Buy
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        );
-      }
     }
+
+    // Add transaction
+    await prisma.transaction.create({
+      data: {
+        portfolio: { connect: { id: portfolioId } },
+        stock: { connect: { stockId } },
+        user: { connect: { id: user.id } },
+        type,
+        quantity,
+        amount: Number(stock.currentPrice) * quantity,
+        createdAt: new Date(),
+      },
+    });
   }
 
+  // Render
   return (
     <>
       <Head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <title>Stock Sim | Market</title>
       </Head>
       <div>
         <h3>View Market</h3>
-        {content}
+        <table>
+          <thead>
+            <tr>
+              <th>Stock</th>
+              <th>Ticker</th>
+              <th>Price</th>
+              <th>Available</th>
+              <th>Trade</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stocks.map((stock) => (
+              <tr key={stock.stockId}>
+                <td>{stock.companyName}</td>
+                <td>{stock.ticker}</td>
+                <td>${stock.currentPrice.toFixed(2)}</td>
+                <td>{stock.initialVolume}</td>
+                <td>
+                  <form action={tradeAction}>
+                    <input type="hidden" name="stockId" value={stock.stockId} />
+                    <input
+                      type="number"
+                      name="quantity"
+                      min={1}
+                      max={stock.initialVolume}
+                      defaultValue={1}
+                      required
+                    />
+                    <button type="submit" name="type" value="BUY">
+                      Buy
+                    </button>
+                    <button type="submit" name="type" value="SELL">
+                      Sell
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );

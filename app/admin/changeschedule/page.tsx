@@ -1,90 +1,91 @@
-import Head from "next/head";
+// ./app/admin/changeschedule/page.tsx
 import { auth } from "../../../auth";
 import prisma from "../../lib/prisma";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
-export default async function ChangeSchedule() {
+export default async function MarketScheduleAdmin() {
   const session = await auth();
 
+  // Only allow admins
   if (!session?.user?.email) {
     return (
       <div>
-        <h3>Access Denied</h3>
-        <p>You do not have permission to access this page.</p>
+        <p>You are not authorized to view this page.</p>
       </div>
     );
   }
-
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
     select: { role: true },
   });
-
   if (!user || user.role !== "ADMIN") {
     return (
       <div>
-        <h3>Access Denied</h3>
-        <p>You do not have permission to access this page.</p>
+        <p>You are not authorized to view this page.</p>
       </div>
     );
   }
 
-  const marketSchedule = await prisma.marketSchedule.findFirst({
-    where: { id: 1 },
-    select: { startTime: true, endTime: true },
-  });
+  // Fetch the current schedule (assuming only one row)
+  const schedule = await prisma.marketSchedule.findFirst();
 
-  async function handleSubmit(formData: FormData) {
+  async function updateSchedule(formData: FormData) {
     "use server";
-    const openingTime = formData.get("openingTime") as string;
-    const closingTime = formData.get("closingTime") as string;
+    const openTime = formData.get("openTime") as string;
+    const closeTime = formData.get("closeTime") as string;
+    if (!openTime || !closeTime) return;
 
-    if (!openingTime || !closingTime) {
-      throw new Error("Invalid input");
-    }
-
-    await prisma.marketSchedule.update({
-      where: { id: 1 },
-      data: {
-        startTime: openingTime,
-        endTime: closingTime,
-      },
+    await prisma.marketSchedule.updateMany({
+      data: { startTime: openTime, endTime: closeTime },
     });
+    revalidatePath("/admin/changeschedule");
     redirect("/admin/changeschedule");
   }
 
   return (
-    <>
-      <Head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
-        <title>Stock Sim | Admin | Change Schedule</title>
-      </Head>
-
-      <div>
-        <h3>Current Schedule</h3>
-        {marketSchedule ? (
-          <p>
-            Opening Time:{" "}
-            {new Date(marketSchedule.startTime).toLocaleTimeString()} <br />
-            Closing Time:{" "}
-            {new Date(marketSchedule.endTime).toLocaleTimeString()}
-          </p>
-        ) : (
-          <p>No schedule found.</p>
-        )}
-        <h3>Change Schedule</h3>
-        <form action={handleSubmit}>
-          <label htmlFor="openingTime">Opening Time:</label>
-          <input type="time" id="openingTime" name="openingTime" required />
-          <br />
-          <label htmlFor="closingTime">Closing Time:</label>
-          <input type="time" id="closingTime" name="closingTime" required />
-          <br />
-          <button type="submit">Update Schedule</button>
-        </form>
-      </div>
-    </>
+    <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow rounded">
+      <h1 className="text-xl font-bold mb-4">Update Market Schedule</h1>
+      <form action={updateSchedule}>
+        <div className="mb-4">
+          <label
+            htmlFor="openTime"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Open Time (HH:mm)
+          </label>
+          <input
+            id="openTime"
+            name="openTime"
+            type="time"
+            defaultValue={schedule?.startTime ?? ""}
+            className="mt-1 block w-full p-2 border rounded"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="closeTime"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Close Time (HH:mm)
+          </label>
+          <input
+            id="closeTime"
+            name="closeTime"
+            type="time"
+            defaultValue={schedule?.endTime ?? ""}
+            className="mt-1 block w-full p-2 border rounded"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Update Schedule
+        </button>
+      </form>
+    </div>
   );
 }

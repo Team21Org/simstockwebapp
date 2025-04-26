@@ -1,76 +1,26 @@
-// src/app/signup/page.js
-//This is the user registration portal
+// src/app/signup/page.tsx
+// This is the user registration portal
 
 import prisma from "../lib/prisma";
-import Head from "next/head";
-import Form from "next/form";
+import { Metadata } from "next";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import bcrypt from "bcryptjs";
 
-export default async function SignUp({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
-  const error = await searchParams?.error;
+// If you want to set metadata (title, etc.) in Next.js 13+ app directory:
+export const metadata: Metadata = {
+  title: "Stock Sim | Sign-Up",
+  description: "User registration portal",
+};
 
-  async function createUser(formData: FormData) {
-    "use server";
-
-    const email = formData.get("E-Mail address") as string;
-    const confirmEmail = formData.get("Confirm E-Mail Address") as string;
-    const password = formData.get("Password") as string;
-    const confirmPassword = formData.get("Confirm Password") as string;
-    const name = formData.get("Full Name") as string;
-    const user = formData.get("Username") as string;
-
-    const authSecret = process.env.AUTH_SECRET;
-
-    if (password !== confirmPassword) {
-      await redirect("/signup?error=Passwords do not match.");
-    }
-    if (email !== confirmEmail) {
-      await redirect("/signup?error=Email addresses do not match.");
-    }
-
-    const hashedPassword = bcrypt.hashSync(password + authSecret, 10);
-
-    await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name: name,
-        userName: user,
-        role: "USER",
-        profile: {
-          create: {
-            email: email,
-            bio: "",
-            Portfolio: {
-              create: {
-                cash: 0.0,
-                totalValue: 0.0,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    revalidatePath("/signup");
-    redirect("/signup");
-  }
-
+export default async function SignUp() {
+  // Fetch users from the database
   const users = await prisma.user.findMany();
+
+  // Placeholder for error handling (implement as needed)
+  const error = null;
 
   return (
     <>
-      <Head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Stock Sim | Sign-Up</title>
-      </Head>
       <h3>Sign-Up</h3>
       <h1 className="text-2xl font-bold mb-4">Sign Up Now!</h1> <br />
       {error && (
@@ -78,35 +28,25 @@ export default async function SignUp({
           <p>{error}</p>
         </div>
       )}
-      <Form action={createUser}>
+      <form action="/api/signup" method="POST">
         <div>
-          <label htmlFor="E-Mail Address">E-Mail Address</label>
-          <input
-            type="email"
-            name="E-Mail address"
-            id="E-Mail Address"
-            required
-          />
-          <label htmlFor="Confirm E-Mail Address">Confirm E-Mail Address</label>
-          <input
-            type="email"
-            name="Confirm E-Mail Address"
-            id="Confirm E-Mail Address"
-            required
-          />
-          <label htmlFor="Password">Password</label>
-          <input type="password" name="Password" id="Password" required />
-          <label htmlFor="Confirm Password">Confirm Password</label>
+          <label htmlFor="email">E-Mail Address</label>
+          <input type="email" name="email" id="email" required />
+          <label htmlFor="confirmEmail">Confirm E-Mail Address</label>
+          <input type="email" name="confirmEmail" id="confirmEmail" required />
+          <label htmlFor="password">Password</label>
+          <input type="password" name="password" id="password" required />
+          <label htmlFor="confirmPassword">Confirm Password</label>
           <input
             type="password"
-            name="Confirm Password"
-            id="Confirm Password"
+            name="confirmPassword"
+            id="confirmPassword"
             required
           />
-          <label htmlFor="Full Name">Full Name</label>
-          <input type="text" name="Full Name" id="Full Name" required />
-          <label htmlFor="Username">Username</label>
-          <input type="text" name="Username" id="Username" required />
+          <label htmlFor="fullName">Full Name</label>
+          <input type="text" name="fullName" id="fullName" required />
+          <label htmlFor="username">Username</label>
+          <input type="text" name="username" id="username" required />
           <button
             type="submit"
             className="bg-purple-500 text-white px-4 py-2 rounded"
@@ -114,9 +54,9 @@ export default async function SignUp({
             SUBMIT
           </button>
         </div>
-      </Form>
+      </form>
       <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
-        {users.map((user) => (
+        {users.map((user: any) => (
           <li key={user.id} className="mb-2">
             {user.email} - {user.name} - {user.userName}
           </li>
