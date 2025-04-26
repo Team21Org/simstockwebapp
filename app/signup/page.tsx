@@ -6,11 +6,8 @@ import Form from "next/form";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-export default async function SignUp({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
+export default async function SignUp(props: any) {
+  const { searchParams } = props;
   const error = searchParams?.error;
 
   async function createUser(formData: FormData) {

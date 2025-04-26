@@ -29,8 +29,9 @@ export default async function ChangeSchedule() {
     );
   }
 
-  const marketSchedule = await prisma.marketSchedule.findUnique({
-    where: { id: "1" },
+  const marketSchedule = await prisma.marketSchedule.findFirst({
+    where: { id: 1 },
+    select: { startTime: true, endTime: true },
   });
 
   async function handleSubmit(formData: FormData) {
@@ -43,10 +44,10 @@ export default async function ChangeSchedule() {
     }
 
     await prisma.marketSchedule.update({
-      where: { id: marketSchedule?.id },
+      where: { id: 1 },
       data: {
-        startTime: new Date(`1970-01-01T${openingTime}:00`),
-        endTime: new Date(`1970-01-01T${closingTime}:00`),
+        startTime: openingTime,
+        endTime: closingTime,
       },
     });
     redirect("/admin/changeschedule");

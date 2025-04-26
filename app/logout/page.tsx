@@ -5,7 +5,7 @@ export default async function LogoutPage({
 }: {
   searchParams?: { from?: string };
 }) {
-  await Logout({ searchParams });
+  // Do not call await Logout here; handle logout via the signout link below.
 
   // Get the previous page from query params, fallback to "/"
   const from = searchParams?.from || "/";

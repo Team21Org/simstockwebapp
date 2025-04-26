@@ -2,7 +2,17 @@ import Head from "next/head";
 // import Image from 'next/image';
 // import Link from 'next/link';
 
-export default function accountbalance() {
+import { FormEvent } from "react";
+export default function accountBalance() {
+  // Dummy balance value for demonstration
+  const balance = 1000;
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    // Handle form submission logic here
+    alert("Form submitted!");
+  }
+
   return (
     <>
       <Head>
@@ -13,9 +23,9 @@ export default function accountbalance() {
       </Head>
       <div>
         <h3>Balance</h3>
-        <p>Current Balance: ${accountBalance.toString()}</p>
+        <p>Current Balance: ${balance.toString()}</p>
         <p>What would you like to do?</p>
-        <Form action={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <input type="radio" id="withdraw" name="balance" value="withdraw" />
           <label htmlFor="withdraw">Withdraw</label>
           <br />
@@ -26,7 +36,7 @@ export default function accountbalance() {
           <input type="text" id="amount" name="amount" />
           <br />
           <input className="btn" type="submit" value="Submit" />
-        </Form>
+        </form>
       </div>
     </>
   );
