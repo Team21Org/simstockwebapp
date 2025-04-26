@@ -1,13 +1,8 @@
 import Head from "next/head";
 import prisma from "../../lib/prisma";
-// import Image from 'next/image';
-
-// import Link from "next/link";
 
 export default async function Viewschedule() {
-  const marketSchedule = await prisma.marketSchedule.findUnique({
-    where: { id: 1 },
-  });
+  const marketSchedule = await prisma.marketSchedule.findFirst();
   return (
     <>
       <Head>
@@ -21,29 +16,24 @@ export default async function Viewschedule() {
         <h1 id="scheduleTitle"> Current Schedule </h1>
         {marketSchedule ? (
           <p id="scheduleTxt">
-            Opening Time:{" "}
-            {new Date(marketSchedule.startTime).toLocaleTimeString()} <br />
-            Closing Time:{" "}
-            {new Date(marketSchedule.endTime).toLocaleTimeString()} <br />
-            Open Monday - Friday
-          </p>
-        ) : (
-          <p>No schedule found.</p>
-        )}
+          Opening Time: {marketSchedule.startTime} <br />
+          Closing Time: {marketSchedule.endTime} <br />
+          Open Monday - Friday
+        </p>
+      ) : (
+        <p>No schedule found.</p>
+      )}
       </div>
       <div>
         <h1 id="holidayTitle">Observed Holidays</h1>
-
         <div className="holidayContainer">
-          {marketSchedule?.holiday?.length > 0 ? (
-            marketSchedule.holiday.map((holiday, index) => (
-              <p id="holidayTxt" key={index}>
-                {holiday}
-              </p>
-            ))
-          ) : (
-            <p>No holidays found.</p>
-          )}
+        {marketSchedule?.holiday?.length > 0 ? (
+          marketSchedule.holiday.map((holiday, index) => (
+            <p id="holidayTxt" key={index}>{holiday}</p>
+          ))
+        ) : (
+          <p>No holidays found.</p>
+        )}
         </div>
       </div>
     </>
