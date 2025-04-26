@@ -6,12 +6,60 @@
 import prisma from "../lib/prisma";
 import Head from "next/head";
 import { auth } from "../../auth";
+import { isMarketOpen } from "../lib/actions";
 
 export default async function ViewMarket() {
   const session = await auth();
   let content;
 
   const stocks = await prisma.stock.findMany();
+
+  async function handleBuy(stock) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        include: {
+          profile: {
+            include: {
+              Portfolio: true,
+            },
+          },
+        },
+      });
+
+      //purchase errors
+      if (user?.profile?.Portfolio?.cash < stock.currentPrice) {
+        alert("Insufficient funds to buy this stock.");
+        return;
+      }
+      if (stock.initialVolume <= 0) {
+        alert("Stock is out of stock.");
+        return;
+      }
+      
+      //update the stock to remove one
+      await prisma.stock.update({
+        where: { stockId: stock.stockId },
+        data: { initialVolume: stock.initialVolume - 1},
+      });
+
+      //update the portfolio to add the stock
+      await prisma.portfolio.upsert({
+        where: { id: { userId: user.id, stockId: stock.stockId } },
+        update: { quantity: { increment: 1 } },
+        create: { userId: user.id, stockId: stock.stockId, quantity: 1 },
+      });
+
+      //update the portfolio to remove the cash
+      await prisma.portfolio.update({
+        where: { id: user.profile.Portfolio.id },
+        data: {
+          cash: Number(user.profile.Portfolio.cash) - stock.currentPrice,
+        },
+      });
+
+  } catch (error) {}
+}
 
   if (!session?.user?.email) {
     content = (
@@ -33,29 +81,13 @@ export default async function ViewMarket() {
         </div>
       );
     } else {
-      const now = new Date();
-
-      const isWeekend = now.getDay() === 0 || now.getDay() === 6; //comment out the 0 to record on sunday
-
-      const startTime = new Date(marketSchedule.startTime);
-      const endTime = new Date(marketSchedule.endTime);
-
-      console.log("Current Time (now):", now);
-      console.log("Market Start Time (startTime):", startTime);
-      console.log("Market End Time (endTime):", endTime);
-
-      const isMarketOpen = !isWeekend && now >= startTime && now <= endTime;
-
       if (!isMarketOpen) {
         content = (
-          <div>
-            <h1>The market is currently closed.</h1>
-            <p>
-              {isWeekend
-                ? "The market is closed on weekends."
-                : `Market hours: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`}
-            </p>
-          </div>
+          <>
+            <div>
+              <h1>The market is currently closed.</h1>
+            </div>
+          </>
         );
       } else {
         content = (
@@ -70,6 +102,10 @@ export default async function ViewMarket() {
                     <th>Company Name</th>
                     <th>Daily Volume</th>
                     <th>Open Price</th>
+                    <th>Current Price</th>
+                    <th>Daily High</th>
+                    <th>Daily Low</th>
+                    <th>Purchase</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -80,6 +116,19 @@ export default async function ViewMarket() {
                       <td>{stock.companyName}</td>
                       <td>{stock.initialVolume}</td>
                       <td>${stock.openPrice.toFixed(2)}</td>
+                      <td>${stock.currentPrice.toFixed(2)}</td>
+                      <td>${stock.dayHigh.toFixed(2)}</td>
+                      <td>${stock.dayLow.toFixed(2)}</td>
+                      <td>
+                        {isMarketOpen && (
+                          <button
+                            onClick={() => handleBuy(stock)}
+                            disabled={stock.initialVolume <= 0}
+                          >
+                            Buy
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
