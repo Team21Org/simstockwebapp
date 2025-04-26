@@ -1,14 +1,8 @@
 import { Logout } from "../lib/actions";
 
-export default async function LogoutPage({
-  searchParams,
-}: {
-  searchParams?: { from?: string };
-}) {
-  // Do not call await Logout here; handle logout via the signout link below.
-
+export default async function LogoutPage() {
   // Get the previous page from query params, fallback to "/"
-  const from = searchParams?.from || "/";
+  const from = "/";
 
   // Use a GET link for logout
   const logoutUrl = `/api/auth/signout?callbackUrl=/login`;
