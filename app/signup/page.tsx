@@ -1,14 +1,19 @@
 // src/app/signup/page.js
 //This is the user registration portal
+
 import prisma from "../lib/prisma";
 import Head from "next/head";
 import Form from "next/form";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-export default async function SignUp(props: any) {
-  const { searchParams } = props;
-  const error = searchParams?.error;
+
+export default async function SignUp({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
+  const error = await searchParams?.error;
 
   async function createUser(formData: FormData) {
     "use server";
@@ -25,21 +30,31 @@ export default async function SignUp(props: any) {
     if (password !== confirmPassword) {
       await redirect("/signup?error=Passwords do not match.");
     }
-
-    // Check if emails match
     if (email !== confirmEmail) {
       await redirect("/signup?error=Email addresses do not match.");
     }
 
     const hashedPassword = bcrypt.hashSync(password + authSecret, 10);
 
-    // Create user if validations pass
     await prisma.user.create({
       data: {
         email,
-        password: hashedPassword,
+        password: hashedPassword, 
         name: name,
         userName: user,
+        role: "USER",
+      profile: {
+        create: {
+          email: email,
+          bio: "",
+          Portfolio: {
+            create: {
+              cash: 0.0,
+              totalValue: 0.0,
+            },
+          },
+        },
+      },
       },
     });
 
