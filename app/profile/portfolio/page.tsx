@@ -101,7 +101,7 @@ export default async function Portfolio() {
         <p>Current Balance:</p>
         <p>${accountBalance.toFixed(2)}</p>
         <div>
-          <Link className="btn" href="./balance">
+          <Link className="btn" href="./portfolio/balance">
             Access Balance
           </Link>
         </div>
