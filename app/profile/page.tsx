@@ -26,7 +26,6 @@ export default async function Profile() {
     });
 
     const userName = user?.userName || "N/A";
-    const accountNumber = user?.profile?.portfolioId || "N/A";
     const accountBalance = user?.profile?.Portfolio?.cash || 0;
 
     content = (
@@ -34,7 +33,6 @@ export default async function Profile() {
         <p>Name: {session?.user.name}</p>
         <p>Username: {userName}</p>
         <p>E-Mail Address: {session?.user.email}</p>
-        <p>Account Number: {accountNumber}</p>
         <p>Account Balance: ${accountBalance.toString()}</p>
       </div>
     );
