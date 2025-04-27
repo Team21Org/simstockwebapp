@@ -60,7 +60,6 @@ export async function registerUser({
           Portfolio: {
             create: {
               cash: 0.0,
-              totalValue: 0.0,
             },
           },
         },
@@ -101,6 +100,7 @@ export async function tradeAction(formData: FormData) {
     const totalCost = stockPrice * quantity;
     const newQuantity = portfolioStock.quantity + quantity;
     const newTotalValue = stockPrice * newQuantity;
+
     if (type === "BUY") {
       if (userCash < totalCost) return { error: "Not enough cash available." };
       if (stock.initialVolume < quantity)
@@ -117,6 +117,7 @@ export async function tradeAction(formData: FormData) {
           where: { id: portfolioStock.id },
           data: {
             quantity: newQuantity,
+            totalValue: newTotalValue,
           },
         });
       } else {
@@ -166,7 +167,7 @@ export async function tradeAction(formData: FormData) {
         user: { connect: { id: user.id } },
         type,
         quantity,
-        amount: stockPrice * quantity,
+        purchasePrice: stockPrice * quantity,
         createdAt: new Date(),
       },
     });

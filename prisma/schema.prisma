@@ -93,7 +93,6 @@ model Portfolio {
   cash         Decimal          @default(0.00) @db.Money
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
-  totalValue   Decimal          @default(0.00) @db.Money
   profileId    String           @unique
   user         Profile          @relation(fields: [profileId], references: [userId], onDelete: Cascade)
   stocks       PortfolioStock[]
@@ -138,6 +137,7 @@ model PortfolioStock {
   portfolioId String
   stockId     String
   quantity    Int       @default(0)
+  totalValue  Decimal   @default(0.00) @db.Money
   createdAt   DateTime  @default(now())
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   stock       Stock     @relation(fields: [stockId], references: [stockId], onDelete: Cascade)

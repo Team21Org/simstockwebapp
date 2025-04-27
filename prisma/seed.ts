@@ -24,7 +24,6 @@ async function main() {
           Portfolio: {
             create: {
               cash: 9999999999999.0,
-              totalValue: 0.0,
             },
           },
         },
@@ -46,7 +45,6 @@ async function main() {
           Portfolio: {
             create: {
               cash: 10000.0,
-              totalValue: 0.0,
             },
           },
         },
@@ -93,38 +91,6 @@ async function main() {
       dayLow: 2700.0,
       dailyVolume: 5000,
       initialVolume: 50000,
-    },
-  });
-
-  // Create Transactions
-  await prisma.transaction.create({
-    data: {
-      user: { connect: { id: regularUser.id } },
-      portfolio: { connect: { id: portfolioId } }, // Add portfolioId
-      type: "DEPOSIT",
-      stock: { connect: { id: stockA.id } },
-      quantity: 0,
-      amount: 5000.0,
-    },
-  });
-
-  await prisma.transaction.create({
-    data: {
-      user: { connect: { id: regularUser.id } },
-      portfolio: { connect: { id: portfolioId } }, // Add portfolioId
-      type: "BUY",
-      stock: { connect: { id: stockA.id } },
-      quantity: 10,
-      amount: 1500.0,
-    },
-  });
-
-  // Update PortfolioStock
-  await prisma.portfolioStock.create({
-    data: {
-      portfolioId: portfolioId,
-      stockId: stockA.stockId,
-      quantity: 10,
     },
   });
 
