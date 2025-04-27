@@ -18,11 +18,14 @@ export async function POST(req: NextRequest) {
   } else {
     await registerUser({
       email,
+      confirmEmail,
       password,
+      confirmPassword,
       name,
       userName,
     });
 
-    return NextResponse.json({ success: true });
+    // Redirect to /signup after successful registration
+    return NextResponse.redirect(new URL("/signup", req.url));
   }
 }
