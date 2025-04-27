@@ -1,36 +1,42 @@
 import { auth } from "../../../auth";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import prisma from "../../lib/prisma";
 import { isMarketOpen } from "../../lib/actions";
 // pages/api/trade.ts
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  // Authenticate using your custom auth function
+export async function POST(req: Request) {
   const session = await auth();
 
   if (!session?.user?.email) {
-    return res.status(401).json({ message: "Not authenticated." });
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // Retrieve the schedule (assuming a single row with id: 1)
-  const schedule = await prisma.marketSchedule.findUnique({ where: { id: 1 } });
-  if (!schedule) {
-    return res
-      .status(500)
-      .json({ message: "Market schedule is not configured." });
-  }
+  // Parse form data
+  const formData = await req.formData();
+  const stockId = formData.get("stockId") as string;
+  const quantity = Number(formData.get("quantity"));
+  const type = formData.get("type") as "BUY" | "SELL";
+  const cash = await prisma.portfolio.findUnique({
+    where: { userId: session.user.id },
+    select: { cash: true },
+  });
 
-  if (!isMarketOpen(schedule)) {
-    return res.status(403).json({
-      message: "Market is closed. Trades are not allowed at this time.",
-    });
+  if (!cash) {
+    return NextResponse.json(
+      { message: "User portfolio not found." },
+      { status: 404 }
+    );
+  } else if (cash.cash < ) {
+    return alert("Insufficient funds");
   }
+  // if (!isMarketOpen(schedule)) {
+  //   return NextResponse.json(
+  //     { message: "Market is closed. Trades are not allowed at this time." },
+  //     { status: 403 }
+  //   );
+  // }
 
   // Add your trade logic here...
-  // e.g., process the trade, update orders, etc.
 
-  return res.status(200).json({ message: "Trade processed successfully." });
+  return NextResponse.json({ message: "Trade processed successfully." });
 }

@@ -1,4 +1,4 @@
-// src/app/page.js
+// app/
 
 // Project: Stock Trading System Simulator
 // Display Create Stock Page
@@ -6,15 +6,21 @@
 import prisma from "../lib/prisma";
 import Head from "next/head";
 import { auth } from "../../auth";
+import { getMarketData } from "../lib/actions";
+import { tradeAction } from "../lib/actions";
 
 export default async function ViewMarket() {
   const session = await auth();
-  const stocks = await prisma.stock.findMany();
-  const marketSchedule = await prisma.marketSchedule.findFirst();
+  const stocks = await getMarketData();
+  if (!session?.user?.email) {
+    return (
+      <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow rounded">
+        <h1 className="text-xl font-bold mb-4">Market Unavailable</h1>
+        <p>You must be logged in to view the market. Please log in.</p>
+      </div>
+    );
+  }
 
-  // Server action for trading
-
-  // Render
   return (
     <>
       <Head>
@@ -40,7 +46,7 @@ export default async function ViewMarket() {
                 <td>${stock.currentPrice.toFixed(2)}</td>
                 <td>{stock.initialVolume}</td>
                 <td>
-                  <form action="/api/market" method="POST">
+                  <form action={tradeAction}>
                     <input type="hidden" name="stockId" value={stock.stockId} />
                     <input
                       type="number"

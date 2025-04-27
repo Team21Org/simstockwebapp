@@ -1,7 +1,10 @@
-// app/api/trade/route.tsx
+// app/api/trade/route.ts
 import { MarketSchedule } from "@prisma/client";
 import prisma from "../lib/prisma";
 import bcrypt from "bcryptjs";
+import { auth } from "../../auth";
+import { NextResponse, NextRequest } from "next/server";
+import NextApiResponse from "next";
 
 /**
  * Returns true if the market is open according to the given schedule.
@@ -71,10 +74,9 @@ export async function registerUser({
  * Handles a trade action (buy/sell) for a user.
  * Requires the session to be passed in for user context.
  */
-export async function tradeAction(
-  formData: FormData,
-  session: { user: { email: string } }
-) {
+export async function tradeAction(formData: FormData) {
+  "use server";
+  const session = await auth();
   const stockId = formData.get("stockId") as string;
   const quantity = Number(formData.get("quantity"));
   const type = formData.get("type") as "BUY" | "SELL";
@@ -101,7 +103,7 @@ export async function tradeAction(
 
   if (type === "BUY") {
     const totalCost = stockPrice * quantity;
-    if (userCash < totalCost) throw new Error("Insufficient funds.");
+    if (userCash < totalCost) throw new Error("Not enough cash available.");
     if (stock.initialVolume < quantity)
       throw new Error("Not enough stock available.");
 
@@ -171,4 +173,9 @@ export async function tradeAction(
   });
 
   return { success: true };
+}
+
+export async function getMarketData() {
+  const stocks = await prisma.stock.findMany();
+  return stocks;
 }

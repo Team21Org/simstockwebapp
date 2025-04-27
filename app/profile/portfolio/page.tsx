@@ -11,7 +11,7 @@ export default async function Portfolio() {
     return (
       <div>
         <h1>You must be logged in to view this page.</h1>
-        </div>
+      </div>
     );
   } else {
     const user = await prisma.user.findFirst({
@@ -23,7 +23,7 @@ export default async function Portfolio() {
           },
         },
       },
-    });   
+    });
 
     const portfolioId = user?.profile?.Portfolio?.id;
     const portfolioStocks = await prisma.portfolioStock.findMany({
@@ -40,73 +40,75 @@ export default async function Portfolio() {
     });
     const accountBalance = user?.profile?.Portfolio?.cash || 0;
 
-  return (
-    <>
-      <Head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
-        <title>Stock Sim | Portfolio</title>
-      </Head>
-      <div>
-        <h3>Portfolio</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Stock Name</th>
-              <th>Ticker</th>
-              <th>Quantity Owned</th>
-              <th>Purchased Price</th>
-              <th>Current Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {portfolioStocks.map((stock) => (
-              <tr key={stock.id}>
-                <td>{stock.stock.companyName}</td>
-                <td>{stock.stock.ticker}</td>
-                <td>{stock.quantity}</td>
-                <td>${stock.purchasePrice.toFixed(2)}</td>
-                <td>${stock.stock.currentPrice.toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <br />
-        <h3>Transaction History</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Transaction Type</th>
-              <th>Amount</th>
-              <th>Ticker Number</th>
-              <th>Quantity</th>
-              <th>Transaction Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((transaction) => (
-              <tr key={transaction.id}>
-                <td>{transaction.type}</td>
-                <td>${transaction.amount.toFixed(2)}</td>
-                <td>{transaction.stock?.ticker || "CASH"}</td>
-                <td>{transaction.quantity}</td>
-                <td>{new Date(transaction.createdAt).toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <br />
-        <h3>Balance</h3>
-        <p>Current Balance:</p>
-        <p>${accountBalance.toFixed(2)}</p>
+    return (
+      <>
+        <Head>
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
+          <title>Stock Sim | Portfolio</title>
+        </Head>
         <div>
-          <Link className="btn" href="./portfolio/balance">
-            Access Balance
-          </Link>
+          <h3>Portfolio</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Stock Name</th>
+                <th>Ticker</th>
+                <th>Quantity Owned</th>
+                <th>Purchased Price</th>
+                <th>Current Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {portfolioStocks.map((stock) => (
+                <tr key={stock.id}>
+                  <td>{stock.stock.companyName}</td>
+                  <td>{stock.stock.ticker}</td>
+                  <td>{stock.quantity}</td>
+                  <td>${stock.purchasePrice.toFixed(2)}</td>
+                  <td>${stock.stock.currentPrice.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <br />
+          <h3>Transaction History</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Transaction Type</th>
+                <th>Amount</th>
+                <th>Ticker Number</th>
+                <th>Quantity</th>
+                <th>Transaction Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map((transaction) => (
+                <tr key={transaction.id}>
+                  <td>{transaction.type}</td>
+                  <td>${transaction.amount.toFixed(2)}</td>
+                  <td>{transaction.stock?.ticker || "CASH"}</td>
+                  <td>{transaction.quantity}</td>
+                  <td>
+                    {new Date(transaction.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <br />
+          <h3>Balance</h3>
+          <p>Current Balance:</p>
+          <p>${accountBalance.toFixed(2)}</p>
+          <div>
+            <Link className="btn" href="./portfolio/balance">
+              Access Balance
+            </Link>
+          </div>
         </div>
-      </div>
-    </>
-  );
-}
+      </>
+    );
+  }
 }
