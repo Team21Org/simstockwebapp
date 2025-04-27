@@ -7,12 +7,13 @@ import prisma from "../lib/prisma";
 import Head from "next/head";
 import Link from "next/link";
 import { auth } from "../../auth";
-import { getMarketData } from "../lib/actions";
-import { tradeAction } from "../lib/actions";
-import { priceChange } from "../lib/actions";
+import { getMarketData, randomizeStockPrices } from "../lib/actions";
+import { TradeForm } from "../lib/ui/tradeconfirm";
 
 export default async function ViewMarket() {
   const session = await auth();
+
+  await randomizeStockPrices();
   const stocks = await getMarketData();
   if (!session?.user?.email) {
     return (
@@ -60,23 +61,10 @@ export default async function ViewMarket() {
                 <td>{Number(stock.dayLow)}</td>
                 <td>{Number(stock.priceChange)}</td>
                 <td>
-                  <form action={tradeAction}>
-                    <input type="hidden" name="stockId" value={stock.stockId} />
-                    <input
-                      type="number"
-                      name="quantity"
-                      min={1}
-                      max={stock.initialVolume}
-                      defaultValue={1}
-                      required
-                    />
-                    <button type="submit" name="type" value="BUY">
-                      Buy
-                    </button>
-                    <button type="submit" name="type" value="SELL">
-                      Sell
-                    </button>
-                  </form>
+                  <TradeForm
+                    stockId={stock.stockId}
+                    maxQuantity={stock.initialVolume}
+                  />
                 </td>
               </tr>
             ))}

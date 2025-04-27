@@ -30,16 +30,14 @@ export default async function Profile() {
     });
 
     const userName = user?.userName || "N/A";
-    const accountNumber = user?.profile?.portfolioId || "N/A";
     const accountBalance = user?.profile?.Portfolio?.cash || 0;
 
     content = (
       <div id="profileInfo">
-        <label>Name:<p>{session?.user.name}</p></label> 
-        <label>Username: <p><strong>{userName}</strong></p></label>
-        <label>E-Mail Address: <p><strong>{session?.user.email}</strong></p> </label>
-        <label>Account Number: <p><strong> {accountNumber} </strong></p> </label>
-        <label>Account Balance: <p><strong> ${accountBalance.toString()} </strong></p> </label>
+        <p>Name: {session?.user.name}</p>
+        <p>Username: {userName}</p>
+        <p>E-Mail Address: {session?.user.email}</p>
+        <p>Account Balance: ${accountBalance.toString()}</p>
       </div>
     );
   }

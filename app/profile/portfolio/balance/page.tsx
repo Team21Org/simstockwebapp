@@ -1,17 +1,10 @@
 // ./app/profile/portfolio/balance/page.tsx
 
 import Head from "next/head";
-// import Image from 'next/image';
-// import Link from 'next/link';
-import { FormEvent } from "react";
-import { updateCash } from "../../../lib/actions";
+import { updateCash, getCash } from "../../../lib/actions";
 
-export default async function accountBalance() {
-  // Dummy balance value for demonstration
-  const balance = await prisma.portfolio.findUnique({
-    where: { id: id },
-    select: { cash: true },
-  });
+export default async function AccountBalance() {
+  const cash = await getCash();
 
   return (
     <>
@@ -23,17 +16,29 @@ export default async function accountBalance() {
       </Head>
       <div>
         <h3>Balance</h3>
-        <p>Current Balance: ${balance.toString()}</p>
+        <p>Current Balance: ${Number(cash)}</p>
         <p>What would you like to do?</p>
         <form action={updateCash}>
-          <input type="radio" id="withdraw" name="balance" value="withdraw" />
+          <input
+            type="radio"
+            id="withdraw"
+            name="balance"
+            value="withdraw"
+            required
+          />
           <label htmlFor="withdraw">Withdraw</label>
           <br />
-          <input type="radio" id="deposit" name="balance" value="deposit" />
+          <input
+            type="radio"
+            id="deposit"
+            name="balance"
+            value="deposit"
+            required
+          />
           <label htmlFor="deposit">Deposit</label>
           <br />
           <p>Amount: </p>
-          <input type="text" id="amount" name="amount" />
+          <input type="number" id="amount" name="amount" min="1" required />
           <br />
           <input className="btn" type="submit" value="Submit" />
         </form>
