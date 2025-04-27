@@ -171,8 +171,6 @@ export async function tradeAction(formData: FormData) {
       createdAt: new Date(),
     },
   });
-
-  return { success: true };
 }
 
 export async function getMarketData() {

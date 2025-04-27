@@ -44,6 +44,7 @@ export default async function ViewMarket() {
                 <td>{stock.companyName}</td>
                 <td>{stock.ticker}</td>
                 <td>${stock.currentPrice.toFixed(2)}</td>
+
                 <td>{stock.initialVolume}</td>
                 <td>
                   <form action={tradeAction}>
