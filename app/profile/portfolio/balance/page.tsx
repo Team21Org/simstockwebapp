@@ -1,17 +1,26 @@
 import Head from "next/head";
 // import Image from 'next/image';
 // import Link from 'next/link';
-
+import React from "react";
 import { FormEvent } from "react";
-export default function accountBalance() {
-  // Dummy balance value for demonstration
-  const balance = 1000;
+import { auth } from "../../../../auth";
+import prisma from "../../../lib/prisma";
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    // Handle form submission logic here
-    alert("Form submitted!");
-  }
+export default async function accountBalance() {
+  const session = await auth();
+  const user = await prisma.user.findFirst({
+    where: { email: session.user.email },
+    include: {
+      profile: {
+        include: {
+          Portfolio: true,
+        },
+      },
+    },
+  });
+  const balance = user?.profile?.Portfolio?.cash || 0;
+  
+
 
   return (
     <>
@@ -25,7 +34,7 @@ export default function accountBalance() {
         <h3>Balance</h3>
         <p>Current Balance: ${balance.toString()}</p>
         <p>What would you like to do?</p>
-        <form onSubmit={handleSubmit}>
+        <form>
           <input type="radio" id="withdraw" name="balance" value="withdraw" />
           <label htmlFor="withdraw">Withdraw</label>
           <br />
