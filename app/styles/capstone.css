@@ -147,7 +147,50 @@ tr:hover {
 	background-color: #7E8DF8;
 }
 
+/* Login Redirect For Signed Out Users */
+#loginRedirect {
+	font-family: "Bellota Text", sans-serif;
+	color:white;
+	font-size: 25px;
+	padding: 10px;
+	text-decoration: none;
+	cursor:pointer;
+	background-color: #6169BB;
+	border-radius: 10px;
+	position: relative;
+	left: 0.5%;
+	float:left;
+}
+#loginRedirect:hover {
+	background-color: #494c4e;
+}
+
+#signupRedirect {
+	font-family: "Bellota Text", sans-serif;
+	color:white;
+	font-size: 25px;
+	padding: 10px;
+	text-decoration: none;
+	cursor:pointer;
+	background-color: #926bd1;
+	border-radius: 10px;
+	position: relative;
+	left: 2%;
+	float:left;
+}
+#signupRedirect:hover {
+	background-color: #494c4e;
+}
+
+#redirectTxt {
+	font-size: 20px;
+	padding-left: 130px;
+}
+
+
+
 /*<<<<<<<<< SPECIFIC PAGE STYLES  >>>>>>>>>>>>>/*
+
 
 /*<<<<<<<<< HOMEPAGE STYLES >>>>>>>>>>>*/
 
@@ -219,12 +262,32 @@ tr:hover {
 }
 /*<<<<<<<<< END OF HOMEPAGE STYLES >>>>>>>>>>>*/
 
+
 /*<<<<<<<<< PROFILE PAGE STYLES >>>>>>>>>>>>>>>*/
+
 #profileInfo {
 	padding-left: 10px;
 }
+#profileInfo label {
+	font-family: "Poppins", sans-serif;
+	font-size: 40px;
+	text-align: center;
+	color:white;
+	background-color: #7862BB;
+	border-radius: 30px;
+	max-width: 600px;
+	margin-top: 20px;
+	flex-direction: column;
+	display:flex;
+	
+}
+#profileInfo p {
+	font-size: 30px;
+}
+
 
 /*<<<<<<<<< END OF PROFILE PAGE STYLES >>>>>>>>>>>>>>>*/
+
 
 /*<<<<<<<<< MARKET PAGE STYLES >>>>>>>>>>>>>>>*/
 #addStockTxt {
@@ -255,6 +318,7 @@ tr:hover {
 }
 /*<<<<<<<<< END OF MARKET PAGE STYLES >>>>>>>>>>>>>>>*/
 
+
 /*<<<<<<<<< SCHEDULE PAGE STYLES >>>>>>>>>>>>>>>*/
 
 /* Title For Current Schedule */ 
@@ -263,12 +327,11 @@ tr:hover {
 	font-size: 50px;
 	text-align: center;
 	max-width: 30%;
-	border-radius: 20px;
+	border-radius: 30px;
 	background-color:#AC7EF8;
 	color:white;
 
 	position: relative;
-	top: 30%;
 	left: 35%;
 }
 
@@ -285,12 +348,11 @@ tr:hover {
 	font-size: 50px;
 	text-align: center;
 	max-width: 30%;
-	border-radius: 20px;
+	border-radius: 30px;
 	background-color:#6169BB;
 	color:white;
 
 	position: relative;
-	top: 30%;
 	left: 35%;
 }
 
@@ -311,8 +373,7 @@ tr:hover {
 /*<<<<<<<<< END OF SCHEDULE PAGE STYLES >>>>>>>>>>>>>>>*/
 
 
-
-/*<<<<<<<<< lOGIN PAGE STYLES >>>>>>>>>>>*/
+/*<<<<<<<<< LOGIN PAGE STYLES >>>>>>>>>>>*/
 
 /* Background For Log-in Form */
 #loginBody {
@@ -351,6 +412,7 @@ tr:hover {
 
 /* Sign In Button */
 #accbtn {
+	font-family: "Bellota Text", sans-serif;
 	background-color: #6169BB;
 	color: white;
 	text-align: center;
@@ -362,7 +424,6 @@ tr:hover {
 	margin-top: 15px;
 	font-size: 25px;
 	width:250px;
-	font-family: "Bellota Text", sans-serif;
 }
 #accbtn:hover {
 	background-color: #494c4e;
@@ -376,8 +437,225 @@ tr:hover {
 	color:black;
 }
 
+/*<<<<<<<<< END OF LOGIN PAGE STYLES >>>>>>>>>>>*/
+
+/*<<<<<<<<< SIGN UP PAGE STYLES >>>>>>>>>>>*/
+#signupContainer {
+	align-items: center;
+	display:flex;
+	justify-content: center;
+	flex-direction: column;
+	min-height: 60vh;
+}
+
+#signupForm {
+	background-color: #7e8cf85d;
+	margin: 20px 500px 0px 500px;
+	display:flex;
+	justify-content: center;
+	border-radius: 70px;
+}
+
+#signupForm input {
+	font-family: "Poppins", sans-serif;
+	font-size: 20px;
+	border-radius: 30px;
+	border: 3px solid #7862BB;
+	padding: 10px;
+	margin-top: 10px;
+	width: 500px;
+}
 
 
+/* Account Link To Sign In */
+#accbtn3 {
+	font-family: sans-serif;
+	font-size: 20px;
+	margin-top: 15px;
+	color:black;
+}
 
-/* Sign Up Button */
+#accbtn4 {
+	font-family: "Bellota Text", sans-serif;
+	background-color: #926bd1;
+	color: white;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+	padding: 12px;
+	border-radius: 25px;
+	border:none;
+	margin-top: 15px;
+	font-size: 25px;
+	width:250px;
+}
 
+/*<<<<<<<<< END OF SIGN UP PAGE STYLES >>>>>>>>>>>*/
+
+/*<<<<<<<<< SIGN OUT PAGE STYLES >>>>>>>>>>>*/
+#signoutBtn{
+	font-family: "Bellota Text", sans-serif;
+	background-color: #494c4e;
+	color: white;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+	padding: 12px;
+	border-radius: 25px;
+	font-size: 25px;
+
+	position: relative;
+	top: 20px;
+	left: 120px;
+}
+#signoutBtn:hover {
+	background-color: #6169BB;
+}
+
+#cancelBtn {
+	font-family: "Bellota Text", sans-serif;
+	background-color: #494c4e;
+	color: white;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+	padding: 12px;
+	border-radius: 25px;
+	border:none;
+	font-size: 25px;
+
+
+	position: relative;
+	top: 70px;
+	left: 190px;
+}
+#cancelBtn:hover {
+	background-color: #6169BB;
+}
+
+/*<<<<<<<<< END OF SIGN UP PAGE STYLES >>>>>>>>>>>*/
+
+
+/* ADMIN PAGE STYLES */ 
+#admTitle {
+	font-family: "Poppins", sans-serif;
+	font-size: 50px;
+	text-align: center;
+	border-radius: 30px;
+	background-color:#494c4e;
+	color:white;
+	display:flex;
+	justify-content: left;
+	align-items: left;
+	width: 500px;
+	margin-left: 10px;
+}
+
+
+/* CHANGE MARKET SCHEDULE STYLES */
+#admLabels label {
+	font-family: "Poppins", sans-serif;
+	font-size: 20px;
+	text-align: center;
+	margin-top: 10px;
+	margin-left: 80px;
+}
+
+#admLabels input {
+	font-family: "Poppins", sans-serif;
+	font-size: 20px;
+	border-radius: 30px;
+	border: 3px solid #494c4e;
+	padding: 10px;
+	margin-top: 15px;
+	margin-left: 5px;
+	width: 130px;
+}
+
+#admBtn {
+	font-family: "Poppins", sans-serif;
+	background-color: #66ccb2;
+	color: white;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+	padding: 12px;
+	border-radius: 25px;
+	border:none;
+	margin-top: 15px;
+	margin-left: 70px;
+	font-size: 25px;
+}
+
+#admBtn:hover {
+	background-color: #494c4e;
+}
+
+/* CREATE STOCK STYLES */
+
+#admForm {
+	font-family: "Poppins", sans-serif;
+	font-size: 20px;
+	text-align: center;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+#admForm label {
+	font-family:  "Bellota Text", sans-serif;
+}
+
+#admForm input {
+	font-family: "Poppins", sans-serif;
+	font-size: 20px;
+	border-radius: 30px;
+	border: 3px solid #494c4e;
+	margin-left: 10px;
+	margin-right: 10px;
+	width: 130px;
+}
+
+#admBtn2 {
+	font-family: "Poppins", sans-serif;
+	background-color: #66ccb2;
+	color: white;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+	padding: 12px;
+	border-radius: 25px;
+	border:none;
+	margin-top: 15px;
+	font-size: 25px;
+}
+
+#admBtn2:hover {
+	background-color: #494c4e;
+}
+
+#admTable {
+	margin-top: 25px;
+	font-family: "Poppins", sans-serif;
+	text-align: center;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+#admTable h1 {
+	padding-left: 40px;
+}
+
+#admForm h1 {
+	font-family: "Poppins", sans-serif;
+	font-size: 50px;
+	text-align: center;
+	border-radius: 30px;
+	background-color:#66ccb2;
+	color:white;
+	width: 400px;
+
+	position: relative;
+	left: 44%;
+}

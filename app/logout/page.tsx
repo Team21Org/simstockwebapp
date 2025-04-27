@@ -1,23 +1,36 @@
+import { auth } from "../../auth";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+
 export default async function LogoutPage() {
+
+  const session = await auth();
+  if (!session?.user?.email) {
+      redirect("/login")
+  }
+
   // Get the previous page from query params, fallback to "/"
   const from = "/";
 
   // Use a GET link for logout
+  
   const logoutUrl = `/api/auth/signout?callbackUrl=/login`;
   return (
     <div>
-      <h1>Log Out</h1>
-      <p>Are you sure you want to log out?</p>
+
+      <h3>Sign Out</h3>
+      <h1>Please choose an option below: </h1>
       <a
         href={logoutUrl}
-        className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+        id="signoutBtn"
         style={{ textDecoration: "none" }}
       >
-        Log Out
-      </a>
+        Proceed To Sign Out
+      </a> <br />
       <a
         href={from}
-        className="bg-gray-300 text-black px-4 py-2 rounded ml-2"
+        id="cancelBtn"
         style={{ textDecoration: "none" }}
       >
         Cancel

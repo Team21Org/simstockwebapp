@@ -61,7 +61,7 @@ export default async function RootLayout({
               href={`/logout?from=${encodeURIComponent(from)}`}
             >
               {" "}
-              Log Out{" "}
+              Sign Out{" "}
             </Link>
             <Link className="login" href="/login">
               {" "}
@@ -88,6 +88,7 @@ export default async function RootLayout({
             )}
           </div>
         </div>
+        
         {children}
       </body>
     </html>
