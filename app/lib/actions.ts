@@ -3,6 +3,7 @@ import { MarketSchedule } from "@prisma/client";
 import prisma from "../lib/prisma";
 import bcrypt from "bcryptjs";
 import { auth } from "../../auth";
+import { redirect } from "next/navigation";
 
 /**
  * Returns true if the market is open according to the given schedule.
@@ -190,6 +191,20 @@ export async function priceChange() {
   });
 }
 
+export async function getCash() {
+  const session = await auth();
+  if (!session?.user?.email) throw new Error("Not authenticated.");
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: { profile: { include: { Portfolio: true } } },
+  });
+  if (!user || !user.profile?.Portfolio)
+    throw new Error("User portfolio not found.");
+
+  return user.profile.Portfolio.cash;
+}
+
 export async function updateCash(formData: FormData) {
   "use server";
   const session = await auth();
@@ -222,6 +237,5 @@ export async function updateCash(formData: FormData) {
     where: { id: portfolioId },
     data: { cash: newCashAmount },
   });
-
-  return { success: true, newCashAmount };
+  redirect("/profile/portfolio/balance");
 }
