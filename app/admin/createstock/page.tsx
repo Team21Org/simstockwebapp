@@ -42,6 +42,7 @@ export default async function CreateStock() {
 
     const initialVolume = parseInt(formData.get("Daily Volume") as string);
     const openPrice = parseFloat(formData.get("Open Price") as string);
+    const currentPrice = openPrice;
 
     await prisma.stock.create({
       data: {
@@ -50,6 +51,7 @@ export default async function CreateStock() {
         companyName,
         initialVolume,
         openPrice,
+        currentPrice: currentPrice,
       },
     });
 
@@ -69,8 +71,8 @@ export default async function CreateStock() {
       </Head>
       <div>
         <h3>Create Stock</h3>
-        <form action={createStock} className="w-full max-w-md">
-          <h1 className="text-2xl font-bold mb-4">Add New Stock</h1>
+        <form action={createStock} id="admForm">
+          <h1>Add New Stock</h1>
           <label htmlFor="Stock Ticker">Stock Ticker</label>
           <input
             type="text"
@@ -106,15 +108,15 @@ export default async function CreateStock() {
           />
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            id="admBtn2"
           >
             Add Item
           </button>
         </form>
 
-        <div className="w-full max-w-md">
-          <div>
-            <h2>Stock List</h2>
+        <div>
+          <div id="admTable">
+            <h1 id="admTitle">Current Stock List</h1>
             <table border={1} cellPadding={8}>
               <thead>
                 <tr>

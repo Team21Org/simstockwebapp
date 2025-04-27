@@ -45,9 +45,10 @@ export default async function MarketScheduleAdmin() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow rounded">
-      <h1 className="text-xl font-bold mb-4">Update Market Schedule</h1>
+      <h3>Change Schedule</h3>
+      <h1 id="admTitle">Update Market Schedule</h1>
       <form action={updateSchedule}>
-        <div className="mb-4">
+        <div id="admLabels">
           <label
             htmlFor="openTime"
             className="block text-sm font-medium text-gray-700"
@@ -63,7 +64,7 @@ export default async function MarketScheduleAdmin() {
             required
           />
         </div>
-        <div className="mb-4">
+        <div id="admLabels">
           <label
             htmlFor="closeTime"
             className="block text-sm font-medium text-gray-700"
@@ -81,9 +82,9 @@ export default async function MarketScheduleAdmin() {
         </div>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded"
+          id="admBtn"
         >
-          Update Schedule
+          Confirm Updated Schedule
         </button>
       </form>
     </div>

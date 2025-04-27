@@ -110,10 +110,10 @@ model Stock {
   dayHigh         Decimal          @default(0.00) @db.Money
   dayLow          Decimal          @default(0.00) @db.Money
   dailyVolume     Int              @default(0)
-  priceChange     Decimal          @default(0.00) @db.Money
   createdAt       DateTime         @default(now())
   initialVolume   Int
   updatedAt       DateTime         @updatedAt
+  priceChange     Decimal          @default(0.00) @db.Money
   portfolioStocks PortfolioStock[]
   transactions    Transaction[]
 }
@@ -127,6 +127,7 @@ model Transaction {
   amount      Decimal      @default(0.00) @db.Money
   createdAt   DateTime     @default(now())
   portfolioId String
+  status      String       @default("Pending")
   portfolio   Portfolio    @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   stock       Stock?       @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -138,8 +139,8 @@ model PortfolioStock {
   stockId       String
   quantity      Int       @default(0)
   averageCost   Decimal   @default(0.00) @db.Money
-  purchasePrice Decimal   @default(0.00) @db.Money
   createdAt     DateTime  @default(now())
+  purchasePrice Decimal   @default(0.00) @db.Money
   portfolio     Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   stock         Stock     @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
 

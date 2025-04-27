@@ -10,7 +10,11 @@ export default async function Portfolio() {
   if (!session?.user?.email) {
     return (
       <div>
-        <h1>You must be logged in to view this page.</h1>
+        <h3>Portfolio</h3>
+        <h1>You must be logged in to view your Portfolio.</h1>
+        <p id="redirectTxt">Please select either option below:</p>
+        <Link id="loginRedirect" href="/login">Click Here To Login!</Link> 
+        <Link id="signupRedirect" href="/signup">Make An Account!</Link>
       </div>
     );
   } else {

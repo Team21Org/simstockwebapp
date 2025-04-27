@@ -3,6 +3,7 @@
 // Project: Stock Trading System Simulator
 // Display Create Stock Page
 import Head from "next/head";
+import Link from "next/link";
 import { auth } from "../../auth";
 import { getMarketData, randomizeStockPrices } from "../lib/actions";
 import { TradeForm } from "../lib/ui/tradeconfirm";
@@ -15,8 +16,12 @@ export default async function ViewMarket() {
   if (!session?.user?.email) {
     return (
       <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow rounded">
-        <h1 className="text-xl font-bold mb-4">Market Unavailable</h1>
-        <p>You must be logged in to view the market. Please log in.</p>
+  
+        <h3>View Market</h3>
+        <h1 className="text-xl font-bold mb-4">You must be logged in to view the Market.</h1>
+        <p id="redirectTxt">Please select either option below:</p>
+        <Link id="loginRedirect" href="/login">Click Here To Login!</Link> 
+        <Link id="signupRedirect" href="/signup">Make An Account!</Link>
       </div>
     );
   }

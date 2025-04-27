@@ -1,6 +1,8 @@
 // src/app/signup/page.tsx
 // This is the user registration portal
 import prisma from "../lib/prisma";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import { User } from "@prisma/client";
 
 export default async function SignUp() {
@@ -9,35 +11,64 @@ export default async function SignUp() {
 
   return (
     <>
-      <h3>Sign-Up</h3>
-      <h1 className="text-2xl font-bold mb-4">Sign Up Now!</h1> <br />
-      <form action="/api/signup" method="POST">
-        <div>
-          <label htmlFor="email">E-Mail Address</label>
-          <input type="email" name="email" id="email" required />
-          <label htmlFor="confirmEmail">Confirm E-Mail Address</label>
-          <input type="email" name="confirmEmail" id="confirmEmail" required />
-          <label htmlFor="password">Password</label>
-          <input type="password" name="password" id="password" required />
-          <label htmlFor="confirmPassword">Confirm Password</label>
+      <h3>Sign Up</h3>
+
+      <form id="signupForm" action="/api/signup" method="POST">
+        <div id="signupContainer">
+          <div id="loginFormTitle"> Start Your SimStock Journey Today! </div>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            required
+            placeholder="Enter E-mail"
+          />
+          <input
+            type="email"
+            name="confirmEmail"
+            id="confirmEmail"
+            required
+            placeholder="Confirm E-Mail Address"
+          />
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+            placeholder="Enter Password"
+          />
           <input
             type="password"
             name="confirmPassword"
             id="confirmPassword"
             required
+            placeholder="Confirm Password"
           />
-          <label htmlFor="name">Full Name</label>
-          <input type="text" name="name" id="name" required />
-          <label htmlFor="userName">Username</label>
-          <input type="text" name="userName" id="userName" required />
-          <button
-            type="submit"
-            className="bg-purple-500 text-white px-4 py-2 rounded"
-          >
-            SUBMIT
+          <input
+            type="text"
+            name="name"
+            id="name"
+            required
+            placeholder="Enter Full Name"
+          />
+          <input
+            type="text"
+            name="userName"
+            id="userName"
+            required
+            placeholder="Enter Username"
+          />
+          <button type="submit" id="accbtn4">
+            {" "}
+            SUBMIT{" "}
           </button>
+          <Link id="accbtn2" href="/login">
+            {" "}
+            Already Have An Account? Click Here!{" "}
+          </Link>
         </div>
       </form>
+
       <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
         {users.map((user: User) => (
           <li key={user.id} className="mb-2">
