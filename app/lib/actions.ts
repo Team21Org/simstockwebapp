@@ -177,20 +177,6 @@ export async function getMarketData() {
   return stocks;
 }
 
-export async function priceChange() {
-  const stocks = await prisma.stock.findMany();
-  return stocks.map((stock) => {
-    const priceChange =
-      ((Number(stock.currentPrice) - Number(stock.openPrice)) /
-        Number(stock.openPrice)) *
-      100;
-    return {
-      stockId: stock.stockId,
-      priceChange,
-    };
-  });
-}
-
 export async function getCash() {
   const session = await auth();
   if (!session?.user?.email) throw new Error("Not authenticated.");
@@ -238,4 +224,21 @@ export async function updateCash(formData: FormData) {
     data: { cash: newCashAmount },
   });
   redirect("/profile/portfolio/balance");
+}
+
+export async function randomizeStockPrices() {
+  const stocks = await getMarketData();
+  await Promise.all(
+    stocks.map(async (stock) => {
+      // Random change between -5% and +5% of the current price
+      const percentChange = Math.random() * 0.1 - 0.05;
+      const increment = Number(stock.currentPrice) * percentChange;
+      await prisma.stock.update({
+        where: { stockId: stock.stockId },
+        data: {
+          currentPrice: Number(stock.currentPrice) + increment,
+        },
+      });
+    })
+  );
 }

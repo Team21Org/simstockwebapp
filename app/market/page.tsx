@@ -6,12 +6,17 @@
 import prisma from "../lib/prisma";
 import Head from "next/head";
 import { auth } from "../../auth";
-import { getMarketData } from "../lib/actions";
-import { tradeAction } from "../lib/actions";
-import { priceChange } from "../lib/actions";
+import {
+  getMarketData,
+  tradeAction,
+  priceChange,
+  randomizeStockPrices,
+} from "../lib/actions";
 
 export default async function ViewMarket() {
   const session = await auth();
+
+  await randomizeStockPrices();
   const stocks = await getMarketData();
   if (!session?.user?.email) {
     return (
