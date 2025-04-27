@@ -2,7 +2,6 @@
 
 import Head from "next/head";
 import { updateCash, getCash } from "../../../lib/actions";
-import prisma from "../../../lib/prisma";
 
 export default async function AccountBalance() {
   const cash = await getCash();

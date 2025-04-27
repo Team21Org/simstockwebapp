@@ -1,27 +1,33 @@
-import { useActionState } from "react";
-import { useRouter } from "next/navigation";
-import { tradeAction } from "../actions";
+"use client";
+import { useState } from "react";
 
-export async function TradeForm({
-  stockId,
-  maxQuantity,
-}: {
-  stockId: string;
-  maxQuantity: number;
-}) {
-  const router = useRouter();
-  const [state, formAction] = useActionState(tradeAction, {});
+export function TradeForm({ stockId, maxQuantity }) {
+  const [loading, setLoading] = useState(false);
+  const [tradeType, setTradeType] = useState("BUY");
 
-  if (state?.error) {
-    window.alert(state.error);
-    router.refresh();
-  } else if (state?.success) {
-    window.alert("Trade successful!");
-    router.refresh();
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData(e.target);
+    formData.set("type", tradeType); // Ensure type is included
+
+    const res = await fetch("/api/market", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await res.json();
+    setLoading(false);
+
+    if (data.error) {
+      window.alert(data.error);
+    } else {
+      window.alert("Trade successful!");
+      window.location.reload();
+    }
   }
 
   return (
-    <form action={formAction}>
+    <form action="/api/market" method="POST" onSubmit={handleSubmit}>
       <input type="hidden" name="stockId" value={stockId} />
       <input
         type="number"
@@ -31,10 +37,18 @@ export async function TradeForm({
         defaultValue={1}
         required
       />
-      <button type="submit" name="type" value="BUY">
+      <button
+        type="submit"
+        onClick={() => setTradeType("BUY")}
+        disabled={loading}
+      >
         Buy
       </button>
-      <button type="submit" name="type" value="SELL">
+      <button
+        type="submit"
+        onClick={() => setTradeType("SELL")}
+        disabled={loading}
+      >
         Sell
       </button>
     </form>

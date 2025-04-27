@@ -6,12 +6,7 @@
 import prisma from "../lib/prisma";
 import Head from "next/head";
 import { auth } from "../../auth";
-import {
-  getMarketData,
-  tradeAction,
-  priceChange,
-  randomizeStockPrices,
-} from "../lib/actions";
+import { getMarketData, randomizeStockPrices } from "../lib/actions";
 import { TradeForm } from "../lib/ui/tradeconfirm";
 
 export default async function ViewMarket() {
@@ -64,7 +59,6 @@ export default async function ViewMarket() {
                   <TradeForm
                     stockId={stock.stockId}
                     maxQuantity={stock.initialVolume}
-                    tradeAction={tradeAction}
                   />
                 </td>
               </tr>

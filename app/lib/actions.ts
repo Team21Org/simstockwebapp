@@ -78,7 +78,8 @@ export async function tradeAction(formData: FormData) {
     const session = await auth();
     const stockId = formData.get("stockId") as string;
     const quantity = Number(formData.get("quantity"));
-    const type = formData.get("type") as "BUY" | "SELL";
+    const type = formData.get("type") as string;
+    console.log("Trade type received:", type);
 
     if (!session?.user?.email) return { error: "Not authenticated." };
 
@@ -99,27 +100,33 @@ export async function tradeAction(formData: FormData) {
 
     const userCash = Number(user.profile.Portfolio.cash);
     const stockPrice = Number(stock.currentPrice);
+    const totalCost = stockPrice * quantity;
 
     if (type === "BUY") {
-      const totalCost = stockPrice * quantity;
       if (userCash < totalCost) return { error: "Not enough cash available." };
       if (stock.initialVolume < quantity)
         return { error: "Not enough stock available." };
 
+      // Update stock volume
       await prisma.stock.update({
         where: { stockId },
         data: { initialVolume: stock.initialVolume - quantity },
       });
 
       if (portfolioStock) {
+        // Update average cost and quantity
+        const newQuantity = portfolioStock.quantity + quantity;
+        const newTotalCost =
+          Number(portfolioStock.averageCost) * portfolioStock.quantity +
+          totalCost;
+        const newAverageCost = newTotalCost / newQuantity;
+
         await prisma.portfolioStock.update({
           where: { id: portfolioStock.id },
           data: {
-            quantity: portfolioStock.quantity + quantity,
-            averageCost:
-              (Number(portfolioStock.averageCost) * portfolioStock.quantity +
-                totalCost) /
-              (portfolioStock.quantity + quantity),
+            quantity: newQuantity,
+            averageCost: newAverageCost,
+            purchasePrice: stockPrice,
           },
         });
       } else {
@@ -129,10 +136,12 @@ export async function tradeAction(formData: FormData) {
             stockId,
             quantity,
             averageCost: stockPrice,
+            purchasePrice: stockPrice,
           },
         });
       }
 
+      // Deduct cash
       await prisma.portfolio.update({
         where: { id: portfolioId },
         data: { cash: userCash - totalCost },
@@ -141,16 +150,19 @@ export async function tradeAction(formData: FormData) {
       if (!portfolioStock || portfolioStock.quantity < quantity)
         return { error: "Not enough shares to sell." };
 
+      // Update stock volume
       await prisma.stock.update({
         where: { stockId },
         data: { initialVolume: stock.initialVolume + quantity },
       });
 
+      // Update portfolio stock
       await prisma.portfolioStock.update({
         where: { id: portfolioStock.id },
         data: { quantity: portfolioStock.quantity - quantity },
       });
 
+      // Add cash
       await prisma.portfolio.update({
         where: { id: portfolioId },
         data: { cash: userCash + stockPrice * quantity },
@@ -197,6 +209,7 @@ export async function getCash() {
 }
 
 export async function updateCash(formData: FormData) {
+  "use server";
   const session = await auth();
   if (!session?.user?.email) throw new Error("Not authenticated.");
 
