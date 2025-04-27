@@ -7,8 +7,10 @@ export async function POST(req: NextRequest) {
     await tradeAction(formData);
     // Optionally, you can redirect or return a JSON response
     return NextResponse.redirect(new URL("/market", req.url));
-  } catch (error: any) {
+  } catch (error: unknown) {
     // You can customize the error handling as needed
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 }

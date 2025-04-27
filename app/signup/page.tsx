@@ -1,7 +1,7 @@
 // src/app/signup/page.tsx
 // This is the user registration portal
 import prisma from "../lib/prisma";
-import { redirect } from "next/navigation";
+import { User } from "@prisma/client";
 
 export default async function SignUp() {
   // Fetch users from the database

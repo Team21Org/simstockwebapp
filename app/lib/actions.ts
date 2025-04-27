@@ -184,8 +184,10 @@ export async function tradeAction(formData: FormData) {
     });
 
     return { success: true };
-  } catch (e: any) {
-    return { error: e.message || "Unknown error" };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return { error: errorMessage };
   }
 }
 

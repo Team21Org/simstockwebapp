@@ -2,8 +2,6 @@
 
 // Project: Stock Trading System Simulator
 // Display Create Stock Page
-
-import prisma from "../lib/prisma";
 import Head from "next/head";
 import { auth } from "../../auth";
 import { getMarketData, randomizeStockPrices } from "../lib/actions";
