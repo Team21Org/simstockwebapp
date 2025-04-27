@@ -12,6 +12,7 @@ import {
   priceChange,
   randomizeStockPrices,
 } from "../lib/actions";
+import { TradeForm } from "../lib/ui/tradeconfirm";
 
 export default async function ViewMarket() {
   const session = await auth();
@@ -60,23 +61,11 @@ export default async function ViewMarket() {
                 <td>{Number(stock.dayLow)}</td>
                 <td>{Number(stock.priceChange)}</td>
                 <td>
-                  <form action={tradeAction}>
-                    <input type="hidden" name="stockId" value={stock.stockId} />
-                    <input
-                      type="number"
-                      name="quantity"
-                      min={1}
-                      max={stock.initialVolume}
-                      defaultValue={1}
-                      required
-                    />
-                    <button type="submit" name="type" value="BUY">
-                      Buy
-                    </button>
-                    <button type="submit" name="type" value="SELL">
-                      Sell
-                    </button>
-                  </form>
+                  <TradeForm
+                    stockId={stock.stockId}
+                    maxQuantity={stock.initialVolume}
+                    tradeAction={tradeAction}
+                  />
                 </td>
               </tr>
             ))}

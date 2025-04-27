@@ -74,102 +74,107 @@ export async function registerUser({
  * Requires the session to be passed in for user context.
  */
 export async function tradeAction(formData: FormData) {
-  "use server";
-  const session = await auth();
-  const stockId = formData.get("stockId") as string;
-  const quantity = Number(formData.get("quantity"));
-  const type = formData.get("type") as "BUY" | "SELL";
+  try {
+    const session = await auth();
+    const stockId = formData.get("stockId") as string;
+    const quantity = Number(formData.get("quantity"));
+    const type = formData.get("type") as "BUY" | "SELL";
 
-  if (!session?.user?.email) throw new Error("Not authenticated.");
+    if (!session?.user?.email) return { error: "Not authenticated." };
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: { profile: { include: { Portfolio: true } } },
-  });
-  if (!user || !user.profile?.Portfolio)
-    throw new Error("User portfolio not found.");
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: { profile: { include: { Portfolio: true } } },
+    });
+    if (!user || !user.profile?.Portfolio)
+      return { error: "User portfolio not found." };
 
-  const stock = await prisma.stock.findUnique({ where: { stockId } });
-  if (!stock) throw new Error("Stock not found.");
+    const stock = await prisma.stock.findUnique({ where: { stockId } });
+    if (!stock) return { error: "Stock not found." };
 
-  const portfolioId = user.profile.Portfolio.id;
-  const portfolioStock = await prisma.portfolioStock.findUnique({
-    where: { portfolioId_stockId: { portfolioId, stockId } },
-  });
-
-  const userCash = Number(user.profile.Portfolio.cash);
-  const stockPrice = Number(stock.currentPrice);
-
-  if (type === "BUY") {
-    const totalCost = stockPrice * quantity;
-    if (userCash < totalCost) throw new Error("Not enough cash available.");
-    if (stock.initialVolume < quantity)
-      throw new Error("Not enough stock available.");
-
-    await prisma.stock.update({
-      where: { stockId },
-      data: { initialVolume: stock.initialVolume - quantity },
+    const portfolioId = user.profile.Portfolio.id;
+    const portfolioStock = await prisma.portfolioStock.findUnique({
+      where: { portfolioId_stockId: { portfolioId, stockId } },
     });
 
-    if (portfolioStock) {
+    const userCash = Number(user.profile.Portfolio.cash);
+    const stockPrice = Number(stock.currentPrice);
+
+    if (type === "BUY") {
+      const totalCost = stockPrice * quantity;
+      if (userCash < totalCost) return { error: "Not enough cash available." };
+      if (stock.initialVolume < quantity)
+        return { error: "Not enough stock available." };
+
+      await prisma.stock.update({
+        where: { stockId },
+        data: { initialVolume: stock.initialVolume - quantity },
+      });
+
+      if (portfolioStock) {
+        await prisma.portfolioStock.update({
+          where: { id: portfolioStock.id },
+          data: {
+            quantity: portfolioStock.quantity + quantity,
+            averageCost:
+              (Number(portfolioStock.averageCost) * portfolioStock.quantity +
+                totalCost) /
+              (portfolioStock.quantity + quantity),
+          },
+        });
+      } else {
+        await prisma.portfolioStock.create({
+          data: {
+            portfolioId,
+            stockId,
+            quantity,
+            averageCost: stockPrice,
+          },
+        });
+      }
+
+      await prisma.portfolio.update({
+        where: { id: portfolioId },
+        data: { cash: userCash - totalCost },
+      });
+    } else if (type === "SELL") {
+      if (!portfolioStock || portfolioStock.quantity < quantity)
+        return { error: "Not enough shares to sell." };
+
+      await prisma.stock.update({
+        where: { stockId },
+        data: { initialVolume: stock.initialVolume + quantity },
+      });
+
       await prisma.portfolioStock.update({
         where: { id: portfolioStock.id },
-        data: {
-          quantity: portfolioStock.quantity + quantity,
-          averageCost:
-            (Number(portfolioStock.averageCost) * portfolioStock.quantity +
-              totalCost) /
-            (portfolioStock.quantity + quantity),
-        },
+        data: { quantity: portfolioStock.quantity - quantity },
+      });
+
+      await prisma.portfolio.update({
+        where: { id: portfolioId },
+        data: { cash: userCash + stockPrice * quantity },
       });
     } else {
-      await prisma.portfolioStock.create({
-        data: {
-          portfolioId,
-          stockId,
-          quantity,
-          averageCost: stockPrice,
-        },
-      });
+      return { error: "Invalid trade type." };
     }
 
-    await prisma.portfolio.update({
-      where: { id: portfolioId },
-      data: { cash: userCash - totalCost },
-    });
-  } else if (type === "SELL") {
-    if (!portfolioStock || portfolioStock.quantity < quantity)
-      throw new Error("Not enough shares to sell.");
-
-    await prisma.stock.update({
-      where: { stockId },
-      data: { initialVolume: stock.initialVolume + quantity },
-    });
-
-    await prisma.portfolioStock.update({
-      where: { id: portfolioStock.id },
-      data: { quantity: portfolioStock.quantity - quantity },
+    await prisma.transaction.create({
+      data: {
+        portfolio: { connect: { id: portfolioId } },
+        stock: { connect: { stockId } },
+        user: { connect: { id: user.id } },
+        type,
+        quantity,
+        amount: stockPrice * quantity,
+        createdAt: new Date(),
+      },
     });
 
-    await prisma.portfolio.update({
-      where: { id: portfolioId },
-      data: { cash: userCash + stockPrice * quantity },
-    });
-  } else {
-    throw new Error("Invalid trade type.");
+    return { success: true };
+  } catch (e: any) {
+    return { error: e.message || "Unknown error" };
   }
-
-  await prisma.transaction.create({
-    data: {
-      portfolio: { connect: { id: portfolioId } },
-      stock: { connect: { stockId } },
-      user: { connect: { id: user.id } },
-      type,
-      quantity,
-      amount: stockPrice * quantity,
-      createdAt: new Date(),
-    },
-  });
 }
 
 export async function getMarketData() {
@@ -192,7 +197,6 @@ export async function getCash() {
 }
 
 export async function updateCash(formData: FormData) {
-  "use server";
   const session = await auth();
   if (!session?.user?.email) throw new Error("Not authenticated.");
 
