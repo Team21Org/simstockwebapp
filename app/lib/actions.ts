@@ -91,8 +91,6 @@ export async function tradeAction(formData: FormData) {
       return { error: "User portfolio not found." };
 
     const stock = await prisma.stock.findUnique({ where: { stockId } });
-    if (!stock) return { error: "Stock not found." };
-
     const portfolioId = user.profile.Portfolio.id;
     const portfolioStock = await prisma.portfolioStock.findUnique({
       where: { portfolioId_stockId: { portfolioId, stockId } },

@@ -1,7 +1,6 @@
 // src/app/signup/page.tsx
 // This is the user registration portal
 import prisma from "../lib/prisma";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { User } from "@prisma/client";
 
