@@ -189,3 +189,39 @@ export async function priceChange() {
     };
   });
 }
+
+export async function updateCash(formData: FormData) {
+  "use server";
+  const session = await auth();
+  if (!session?.user?.email) throw new Error("Not authenticated.");
+
+  const amount = Number(formData.get("amount"));
+  const action = formData.get("balance"); // "withdraw" or "deposit"
+
+  // Find the user's portfolio
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: { profile: { include: { Portfolio: true } } },
+  });
+  if (!user || !user.profile?.Portfolio)
+    throw new Error("Portfolio not found.");
+
+  const portfolioId = user.profile.Portfolio.id;
+  let newCashAmount = Number(user.profile.Portfolio.cash);
+
+  if (action === "withdraw") {
+    if (newCashAmount < amount) throw new Error("Insufficient funds.");
+    newCashAmount -= amount;
+  } else if (action === "deposit") {
+    newCashAmount += amount;
+  } else {
+    throw new Error("Invalid action.");
+  }
+
+  await prisma.portfolio.update({
+    where: { id: portfolioId },
+    data: { cash: newCashAmount },
+  });
+
+  return { success: true, newCashAmount };
+}

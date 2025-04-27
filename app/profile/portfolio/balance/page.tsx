@@ -1,17 +1,17 @@
+// ./app/profile/portfolio/balance/page.tsx
+
 import Head from "next/head";
 // import Image from 'next/image';
 // import Link from 'next/link';
-
 import { FormEvent } from "react";
-export default function accountBalance() {
-  // Dummy balance value for demonstration
-  const balance = 1000;
+import { updateCash } from "../../../lib/actions";
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    // Handle form submission logic here
-    alert("Form submitted!");
-  }
+export default async function accountBalance() {
+  // Dummy balance value for demonstration
+  const balance = await prisma.portfolio.findUnique({
+    where: { id: id },
+    select: { cash: true },
+  });
 
   return (
     <>
@@ -25,7 +25,7 @@ export default function accountBalance() {
         <h3>Balance</h3>
         <p>Current Balance: ${balance.toString()}</p>
         <p>What would you like to do?</p>
-        <form onSubmit={handleSubmit}>
+        <form action={updateCash}>
           <input type="radio" id="withdraw" name="balance" value="withdraw" />
           <label htmlFor="withdraw">Withdraw</label>
           <br />
