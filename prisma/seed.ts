@@ -21,6 +21,12 @@ async function main() {
         create: {
           email: "admin@example.com",
           bio: "Administrator of the stock trading system.",
+          Portfolio: {
+            create: {
+              cash: 9999999999999.0,
+              totalValue: 0.0,
+            },
+          },
         },
       },
     },
@@ -119,7 +125,6 @@ async function main() {
       portfolioId: portfolioId,
       stockId: stockA.stockId,
       quantity: 10,
-      averageCost: 150.0,
     },
   });
 

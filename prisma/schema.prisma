@@ -119,30 +119,28 @@ model Stock {
 }
 
 model Transaction {
-  id          String       @id @default(cuid())
-  userId      String
-  type        TransactType
-  stockId     String?
-  quantity    Int          @default(1)
-  amount      Decimal      @default(0.00) @db.Money
-  createdAt   DateTime     @default(now())
-  portfolioId String
-  status      String       @default("Pending")
-  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
-  stock       Stock?       @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String       @id @default(cuid())
+  userId        String
+  type          TransactType
+  stockId       String?
+  quantity      Int          @default(1)
+  purchasePrice Decimal      @default(0.00) @db.Money
+  createdAt     DateTime     @default(now())
+  portfolioId   String
+  status        String       @default("Pending")
+  portfolio     Portfolio    @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  stock         Stock?       @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PortfolioStock {
-  id            String    @id @default(uuid())
-  portfolioId   String
-  stockId       String
-  quantity      Int       @default(0)
-  averageCost   Decimal   @default(0.00) @db.Money
-  createdAt     DateTime  @default(now())
-  purchasePrice Decimal   @default(0.00) @db.Money
-  portfolio     Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
-  stock         Stock     @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
+  id          String    @id @default(uuid())
+  portfolioId String
+  stockId     String
+  quantity    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  stock       Stock     @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
 
   @@unique([portfolioId, stockId])
 }

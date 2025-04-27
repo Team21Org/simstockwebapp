@@ -77,7 +77,7 @@ export async function tradeAction(formData: FormData) {
   try {
     const session = await auth();
     const stockId = formData.get("stockId") as string;
-    const quantity = Number(formData.get("quantity"));
+    const quantity = Number(formData.get("quantity")) as number;
     const type = formData.get("type") as string;
     console.log("Trade type received:", type);
 
@@ -99,7 +99,8 @@ export async function tradeAction(formData: FormData) {
     const userCash = Number(user.profile.Portfolio.cash);
     const stockPrice = Number(stock.currentPrice);
     const totalCost = stockPrice * quantity;
-
+    const newQuantity = portfolioStock.quantity + quantity;
+    const newTotalValue = stockPrice * newQuantity;
     if (type === "BUY") {
       if (userCash < totalCost) return { error: "Not enough cash available." };
       if (stock.initialVolume < quantity)
@@ -112,19 +113,10 @@ export async function tradeAction(formData: FormData) {
       });
 
       if (portfolioStock) {
-        // Update average cost and quantity
-        const newQuantity = portfolioStock.quantity + quantity;
-        const newTotalCost =
-          Number(portfolioStock.averageCost) * portfolioStock.quantity +
-          totalCost;
-        const newAverageCost = newTotalCost / newQuantity;
-
         await prisma.portfolioStock.update({
           where: { id: portfolioStock.id },
           data: {
             quantity: newQuantity,
-            averageCost: newAverageCost,
-            purchasePrice: stockPrice,
           },
         });
       } else {
@@ -133,8 +125,6 @@ export async function tradeAction(formData: FormData) {
             portfolioId,
             stockId,
             quantity,
-            averageCost: stockPrice,
-            purchasePrice: stockPrice,
           },
         });
       }
