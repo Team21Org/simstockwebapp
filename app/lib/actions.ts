@@ -3,8 +3,6 @@ import { MarketSchedule } from "@prisma/client";
 import prisma from "../lib/prisma";
 import bcrypt from "bcryptjs";
 import { auth } from "../../auth";
-import { NextResponse, NextRequest } from "next/server";
-import NextApiResponse from "next";
 
 /**
  * Returns true if the market is open according to the given schedule.
@@ -176,4 +174,13 @@ export async function tradeAction(formData: FormData) {
 export async function getMarketData() {
   const stocks = await prisma.stock.findMany();
   return stocks;
+}
+
+export async function priceChange() {
+  const stocks = await prisma.stock.findMany();
+  return stocks.map((stock) => {
+    const priceChange =
+      ((stock.currentPrice - stock.openPrice) / stock.openPrice) * 100;
+    return { ...stock, priceChange };
+  });
 }

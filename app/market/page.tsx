@@ -35,6 +35,10 @@ export default async function ViewMarket() {
               <th>Ticker</th>
               <th>Price</th>
               <th>Available</th>
+              <th>Day Open</th>
+              <th>Day High</th>
+              <th>Day Low</th>
+              <th>Price Change</th>
               <th>Trade</th>
             </tr>
           </thead>
@@ -46,6 +50,10 @@ export default async function ViewMarket() {
                 <td>${stock.currentPrice.toFixed(2)}</td>
 
                 <td>{stock.initialVolume}</td>
+                <td>{Number(stock.openPrice)}</td>
+                <td>{Number(stock.dayHigh)}</td>
+                <td>{Number(stock.dayLow)}</td>
+                <td>{}</td>
                 <td>
                   <form action={tradeAction}>
                     <input type="hidden" name="stockId" value={stock.stockId} />
