@@ -42,6 +42,7 @@ export default async function CreateStock() {
 
     const initialVolume = parseInt(formData.get("Daily Volume") as string);
     const openPrice = parseFloat(formData.get("Open Price") as string);
+    const currentPrice = openPrice;
 
     await prisma.stock.create({
       data: {
@@ -50,6 +51,7 @@ export default async function CreateStock() {
         companyName,
         initialVolume,
         openPrice,
+        currentPrice: currentPrice,
       },
     });
 
