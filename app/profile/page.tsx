@@ -34,10 +34,10 @@ export default async function Profile() {
 
     content = (
       <div id="profileInfo">
-        <p>Name: {session?.user.name}</p>
-        <p>Username: {userName}</p>
-        <p>E-Mail Address: {session?.user.email}</p>
-        <p>Account Balance: ${accountBalance.toString()}</p>
+        <label> Name: <p>{session?.user.name}</p></label> 
+        <label>Username: <p>{userName}</p></label>
+        <label>E-Mail Address: <p>{session?.user.email}</p></label>
+        <label>Account Balance: <p>${accountBalance.toString()}</p></label>
       </div>
     );
   }
