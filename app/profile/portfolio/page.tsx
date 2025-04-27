@@ -1,7 +1,45 @@
 import Head from "next/head";
 import Link from "next/link";
+import React from "react";
+import { auth } from "../../../auth";
+import prisma from "../../lib/prisma";
 
-export default function Portfolio() {
+export default async function Portfolio() {
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    return (
+      <div>
+        <h1>You must be logged in to view this page.</h1>
+        </div>
+    );
+  } else {
+    const user = await prisma.user.findFirst({
+      where: { email: session.user.email },
+      include: {
+        profile: {
+          include: {
+            Portfolio: true,
+          },
+        },
+      },
+    });   
+
+    const portfolioId = user?.profile?.Portfolio?.id;
+    const portfolioStocks = await prisma.portfolioStock.findMany({
+      where: { portfolioId },
+      include: {
+        stock: true,
+      },
+    });
+    const transactions = await prisma.transaction.findMany({
+      where: { portfolioId },
+      include: {
+        stock: true,
+      },
+    });
+    const accountBalance = user?.profile?.Portfolio?.cash || 0;
+
   return (
     <>
       <Head>
@@ -18,12 +56,20 @@ export default function Portfolio() {
               <th>Stock Name</th>
               <th>Ticker</th>
               <th>Quantity Owned</th>
-              <th>Average Cost</th>
-              <th>Opening Price</th>
-              <th>Trade</th>
+              <th>Purchased Price</th>
+              <th>Current Price</th>
             </tr>
           </thead>
           <tbody>
+            {portfolioStocks.map((stock) => (
+              <tr key={stock.id}>
+                <td>{stock.stock.companyName}</td>
+                <td>{stock.stock.ticker}</td>
+                <td>{stock.quantity}</td>
+                <td>${stock.purchasePrice.toFixed(2)}</td>
+                <td>${stock.stock.currentPrice.toFixed(2)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
         <br />
@@ -39,16 +85,28 @@ export default function Portfolio() {
             </tr>
           </thead>
           <tbody>
+            {transactions.map((transaction) => (
+              <tr key={transaction.id}>
+                <td>{transaction.type}</td>
+                <td>${transaction.amount.toFixed(2)}</td>
+                <td>{transaction.stock?.ticker || "CASH"}</td>
+                <td>{transaction.quantity}</td>
+                <td>{new Date(transaction.createdAt).toLocaleDateString()}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
+        <br />
         <h3>Balance</h3>
         <p>Current Balance:</p>
+        <p>${accountBalance.toFixed(2)}</p>
         <div>
-          <Link className="btn" href="./balance">
+          <Link className="btn" href="./portfolio/balance">
             Access Balance
           </Link>
         </div>
       </div>
     </>
   );
+}
 }
