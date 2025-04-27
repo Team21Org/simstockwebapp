@@ -110,6 +110,7 @@ model Stock {
   dayHigh         Decimal          @default(0.00) @db.Money
   dayLow          Decimal          @default(0.00) @db.Money
   dailyVolume     Int              @default(0)
+  priceChange     Decimal          @default(0.00) @db.Money
   createdAt       DateTime         @default(now())
   initialVolume   Int
   updatedAt       DateTime         @updatedAt

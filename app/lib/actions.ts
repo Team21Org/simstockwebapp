@@ -180,7 +180,12 @@ export async function priceChange() {
   const stocks = await prisma.stock.findMany();
   return stocks.map((stock) => {
     const priceChange =
-      ((stock.currentPrice - stock.openPrice) / stock.openPrice) * 100;
-    return { ...stock, priceChange };
+      ((Number(stock.currentPrice) - Number(stock.openPrice)) /
+        Number(stock.openPrice)) *
+      100;
+    return {
+      stockId: stock.stockId,
+      priceChange,
+    };
   });
 }

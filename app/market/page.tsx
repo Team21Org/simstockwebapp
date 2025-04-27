@@ -8,6 +8,7 @@ import Head from "next/head";
 import { auth } from "../../auth";
 import { getMarketData } from "../lib/actions";
 import { tradeAction } from "../lib/actions";
+import { priceChange } from "../lib/actions";
 
 export default async function ViewMarket() {
   const session = await auth();
@@ -48,12 +49,11 @@ export default async function ViewMarket() {
                 <td>{stock.companyName}</td>
                 <td>{stock.ticker}</td>
                 <td>${stock.currentPrice.toFixed(2)}</td>
-
                 <td>{stock.initialVolume}</td>
                 <td>{Number(stock.openPrice)}</td>
                 <td>{Number(stock.dayHigh)}</td>
                 <td>{Number(stock.dayLow)}</td>
-                <td>{}</td>
+                <td>{Number(stock.priceChange)}</td>
                 <td>
                   <form action={tradeAction}>
                     <input type="hidden" name="stockId" value={stock.stockId} />
