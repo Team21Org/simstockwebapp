@@ -40,7 +40,7 @@ export default async function ViewMarket() {
                 <td>${stock.currentPrice.toFixed(2)}</td>
                 <td>{stock.initialVolume}</td>
                 <td>
-                  <form action={tradeAction}>
+                  <form action="/api/market" method="POST">
                     <input type="hidden" name="stockId" value={stock.stockId} />
                     <input
                       type="number"
