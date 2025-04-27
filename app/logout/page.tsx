@@ -1,5 +1,3 @@
-import { Logout } from "../lib/actions";
-
 export default async function LogoutPage() {
   // Get the previous page from query params, fallback to "/"
   const from = "/";

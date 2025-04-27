@@ -8,9 +8,7 @@ import Head from "next/head";
 import { auth } from "../../auth";
 
 export default function ViewMarket() {
-  const session = await auth();
   const stocks = await prisma.stock.findMany();
-  const marketSchedule = await prisma.marketSchedule.findFirst();
 
   // Server action for trading
   async function tradeAction(formData: FormData) {

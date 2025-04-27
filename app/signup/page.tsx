@@ -1,16 +1,6 @@
 // src/app/signup/page.tsx
 // This is the user registration portal
-
 import prisma from "../lib/prisma";
-import { Metadata } from "next";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
-// If you want to set metadata (title, etc.) in Next.js 13+ app directory:
-export const metadata: Metadata = {
-  title: "Stock Sim | Sign-Up",
-  description: "User registration portal",
-};
 
 export default async function SignUp() {
   // Fetch users from the database
@@ -56,7 +46,7 @@ export default async function SignUp() {
         </div>
       </form>
       <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
-        {users.map((user: any) => (
+        {users.map((user: User) => (
           <li key={user.id} className="mb-2">
             {user.email} - {user.name} - {user.userName}
           </li>

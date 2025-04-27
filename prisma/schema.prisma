@@ -132,13 +132,15 @@ model Transaction {
 }
 
 model PortfolioStock {
-  id          String    @id @default(uuid())
-  portfolioId String
-  stockId     String
-  quantity    Int       @default(0)
-  averageCost Decimal   @default(0.00) @db.Money
-  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
-  stock       Stock     @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
+  id            String    @id @default(uuid())
+  portfolioId   String
+  stockId       String
+  quantity      Int       @default(0)
+  averageCost   Decimal   @default(0.00) @db.Money
+  purchasePrice Decimal   @default(0.00) @db.Money
+  createdAt     DateTime  @default(now())
+  portfolio     Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  stock         Stock     @relation(fields: [stockId], references: [stockId], onDelete: Cascade)
 
   @@unique([portfolioId, stockId])
 }

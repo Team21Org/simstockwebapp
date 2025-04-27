@@ -1,10 +1,7 @@
-import { auth } from "../../auth";
-import { redirect } from "next/navigation";
+// app/api/trade/route.tsx
 import { MarketSchedule } from "@prisma/client";
 import prisma from "../lib/prisma";
 import bcrypt from "bcryptjs";
-
-// lib/marketUtils.ts
 
 /**
  * Check if the current time is between the openTime and closeTime.
