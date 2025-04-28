@@ -135,6 +135,18 @@ export async function tradeAction(formData: FormData) {
       where: { id: portfolioId },
       data: { cash: userCash - totalCost },
     });
+
+    await prisma.transaction.create({
+      data: {
+        portfolio: { connect: { id: portfolioId } },
+        stock: { connect: { stockId } },
+        user: { connect: { id: user.id } },
+        type,
+        quantity,
+        purchasePrice: stockPrice * quantity,
+        createdAt: new Date(),
+      },
+    });
   }
 
   if (type === "SELL") {
