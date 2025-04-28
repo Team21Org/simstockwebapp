@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export function TradeForm({ stockId, maxBuyQuantity, maxSellQuantity }) {
+export function TradeForm({ stockId }) {
   const [loading, setLoading] = useState(false);
   const [tradeType, setTradeType] = useState("BUY");
 

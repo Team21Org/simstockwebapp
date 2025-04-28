@@ -96,11 +96,7 @@ export default async function ViewMarket() {
                   <td>{Number(stock.priceChange)}</td>
                   <td>{held}</td>
                   <td>
-                    <TradeForm
-                      stockId={stock.stockId}
-                      maxBuyQuantity={stock.initialVolume}
-                      maxSellQuantity={held}
-                    />
+                    <TradeForm stockId={stock.stockId} />
                   </td>
                 </tr>
               );

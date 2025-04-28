@@ -4,10 +4,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { redirect } from "next/navigation";
-import { auth } from "../../auth";
 // import { User } from "../../auth.config";
-
 
 export default function Login() {
   const handleSubmit = async (formData: FormData) => {
@@ -46,9 +43,7 @@ export default function Login() {
             await handleSubmit(formData);
           }}
         >
-          <label id="loginFormTitle">
-            Your Investment Success Is Waiting!
-          </label>
+          <label id="loginFormTitle">Your Investment Success Is Waiting!</label>
           <label id="loginBox">
             <input name="email" type="email" placeholder="Email" />
           </label>
@@ -59,7 +54,10 @@ export default function Login() {
             </label>
           </div>
           <button id="accbtn">SIGN IN</button>
-          <Link id="accbtn3" href="/signup"> No Account? Make One Here! </Link>
+          <Link id="accbtn3" href="/signup">
+            {" "}
+            No Account? Make One Here!{" "}
+          </Link>
         </form>
       </div>
     </div>
