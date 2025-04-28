@@ -76,6 +76,7 @@ export default async function ViewMarket() {
               <th>Day High</th>
               <th>Day Low</th>
               <th>Price Change</th>
+              <th>Market Cap</th>
               <th>Quantity Held by You</th>
             </tr>
           </thead>
@@ -94,6 +95,9 @@ export default async function ViewMarket() {
                   <td>{Number(stock.dayHigh)}</td>
                   <td>{Number(stock.dayLow)}</td>
                   <td>{Number(stock.priceChange)}</td>
+                  <td>
+                    {Number(stock.dailyVolume) * Number(stock.currentPrice)}
+                  </td>
                   <td>{held}</td>
                   <td>
                     <TradeForm stockId={stock.stockId} />
