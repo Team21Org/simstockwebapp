@@ -65,7 +65,7 @@ export default async function ViewMarket() {
       </Head>
       <div>
         <h3>View Market</h3>
-        <table>
+        <table id="markTable">
           <thead>
             <tr>
               <th>Stock</th>
