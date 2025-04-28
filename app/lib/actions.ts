@@ -60,7 +60,6 @@ export async function registerUser({
           Portfolio: {
             create: {
               cash: 0.0,
-              totalValue: 0.0,
             },
           },
         },
@@ -77,7 +76,7 @@ export async function tradeAction(formData: FormData) {
   try {
     const session = await auth();
     const stockId = formData.get("stockId") as string;
-    const quantity = Number(formData.get("quantity"));
+    const quantity = Number(formData.get("quantity")) as number;
     const type = formData.get("type") as string;
     console.log("Trade type received:", type);
 
@@ -91,8 +90,6 @@ export async function tradeAction(formData: FormData) {
       return { error: "User portfolio not found." };
 
     const stock = await prisma.stock.findUnique({ where: { stockId } });
-    if (!stock) return { error: "Stock not found." };
-
     const portfolioId = user.profile.Portfolio.id;
     const portfolioStock = await prisma.portfolioStock.findUnique({
       where: { portfolioId_stockId: { portfolioId, stockId } },
@@ -101,6 +98,8 @@ export async function tradeAction(formData: FormData) {
     const userCash = Number(user.profile.Portfolio.cash);
     const stockPrice = Number(stock.currentPrice);
     const totalCost = stockPrice * quantity;
+    const newQuantity = portfolioStock.quantity + quantity;
+    const newTotalValue = stockPrice * newQuantity;
 
     if (type === "BUY") {
       if (userCash < totalCost) return { error: "Not enough cash available." };
@@ -114,19 +113,11 @@ export async function tradeAction(formData: FormData) {
       });
 
       if (portfolioStock) {
-        // Update average cost and quantity
-        const newQuantity = portfolioStock.quantity + quantity;
-        const newTotalCost =
-          Number(portfolioStock.averageCost) * portfolioStock.quantity +
-          totalCost;
-        const newAverageCost = newTotalCost / newQuantity;
-
         await prisma.portfolioStock.update({
           where: { id: portfolioStock.id },
           data: {
             quantity: newQuantity,
-            averageCost: newAverageCost,
-            purchasePrice: stockPrice,
+            totalValue: newTotalValue,
           },
         });
       } else {
@@ -135,8 +126,6 @@ export async function tradeAction(formData: FormData) {
             portfolioId,
             stockId,
             quantity,
-            averageCost: stockPrice,
-            purchasePrice: stockPrice,
           },
         });
       }
@@ -178,14 +167,16 @@ export async function tradeAction(formData: FormData) {
         user: { connect: { id: user.id } },
         type,
         quantity,
-        amount: stockPrice * quantity,
+        purchasePrice: stockPrice * quantity,
         createdAt: new Date(),
       },
     });
 
     return { success: true };
-  } catch (e: any) {
-    return { error: e.message || "Unknown error" };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return { error: errorMessage };
   }
 }
 

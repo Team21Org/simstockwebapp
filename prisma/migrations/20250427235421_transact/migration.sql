@@ -89,7 +89,6 @@ CREATE TABLE "Portfolio" (
     "cash" MONEY NOT NULL DEFAULT 0.00,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "totalValue" MONEY NOT NULL DEFAULT 0.00,
     "profileId" TEXT NOT NULL,
 
     CONSTRAINT "Portfolio_pkey" PRIMARY KEY ("id")
@@ -109,6 +108,7 @@ CREATE TABLE "Stock" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "initialVolume" INTEGER NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "priceChange" MONEY NOT NULL DEFAULT 0.00,
 
     CONSTRAINT "Stock_pkey" PRIMARY KEY ("id")
 );
@@ -120,9 +120,10 @@ CREATE TABLE "Transaction" (
     "type" "TransactType" NOT NULL,
     "stockId" TEXT,
     "quantity" INTEGER NOT NULL DEFAULT 1,
-    "amount" MONEY NOT NULL DEFAULT 0.00,
+    "purchasePrice" MONEY NOT NULL DEFAULT 0.00,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "portfolioId" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'Pending',
 
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
 );
@@ -133,7 +134,8 @@ CREATE TABLE "PortfolioStock" (
     "portfolioId" TEXT NOT NULL,
     "stockId" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL DEFAULT 0,
-    "averageCost" MONEY NOT NULL DEFAULT 0.00,
+    "totalValue" MONEY NOT NULL DEFAULT 0.00,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "PortfolioStock_pkey" PRIMARY KEY ("id")
 );
@@ -141,8 +143,8 @@ CREATE TABLE "PortfolioStock" (
 -- CreateTable
 CREATE TABLE "MarketSchedule" (
     "id" SERIAL NOT NULL,
-    "startTime" TEXT NOT NULL DEFAULT '09:00:00',
-    "endTime" TEXT NOT NULL DEFAULT '17:00:00',
+    "startTime" TEXT NOT NULL DEFAULT '09:00',
+    "endTime" TEXT NOT NULL DEFAULT '17:00',
     "holiday" TEXT[] DEFAULT ARRAY['Labor Day', 'Thanksgiving', 'Christmas', 'New Year''s Day', 'Independence Day', 'Memorial Day', 'Veterans Day', 'Martin Luther King Jr. Day', 'Presidents'' Day', 'Columbus Day']::TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -175,10 +177,7 @@ CREATE UNIQUE INDEX "Stock_stockId_key" ON "Stock"("stockId");
 CREATE UNIQUE INDEX "Stock_ticker_key" ON "Stock"("ticker");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "PortfolioStock_portfolioId_key" ON "PortfolioStock"("portfolioId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "PortfolioStock_stockId_key" ON "PortfolioStock"("stockId");
+CREATE UNIQUE INDEX "PortfolioStock_portfolioId_stockId_key" ON "PortfolioStock"("portfolioId", "stockId");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -196,7 +195,7 @@ ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Portfolio" ADD CONSTRAINT "Portfolio_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_portfolioId_fkey" FOREIGN KEY ("portfolioId") REFERENCES "Portfolio"("profileId") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_portfolioId_fkey" FOREIGN KEY ("portfolioId") REFERENCES "Portfolio"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_stockId_fkey" FOREIGN KEY ("stockId") REFERENCES "Stock"("stockId") ON DELETE CASCADE ON UPDATE CASCADE;

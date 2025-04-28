@@ -13,8 +13,12 @@ export default async function Portfolio() {
         <h3>Portfolio</h3>
         <h1>You must be logged in to view your Portfolio.</h1>
         <p id="redirectTxt">Please select either option below:</p>
-        <Link id="loginRedirect" href="/login">Click Here To Login!</Link> 
-        <Link id="signupRedirect" href="/signup">Make An Account!</Link>
+        <Link id="loginRedirect" href="/login">
+          Click Here To Login!
+        </Link>
+        <Link id="signupRedirect" href="/signup">
+          Make An Account!
+        </Link>
       </div>
     );
   } else {
@@ -71,7 +75,6 @@ export default async function Portfolio() {
                   <td>{stock.stock.companyName}</td>
                   <td>{stock.stock.ticker}</td>
                   <td>{stock.quantity}</td>
-                  <td>${stock.purchasePrice.toFixed(2)}</td>
                   <td>${stock.stock.currentPrice.toFixed(2)}</td>
                 </tr>
               ))}
@@ -94,7 +97,7 @@ export default async function Portfolio() {
               {transactions.map((transaction) => (
                 <tr key={transaction.id}>
                   <td>{transaction.type}</td>
-                  <td>${transaction.amount.toFixed(2)}</td>
+                  <td>${transaction.purchasePrice.toFixed(2)}</td>
                   <td>{transaction.stock?.ticker || "CASH"}</td>
                   <td>{transaction.quantity}</td>
                   <td>
