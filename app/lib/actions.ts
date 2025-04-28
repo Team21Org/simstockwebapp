@@ -73,93 +73,91 @@ export async function registerUser({
  * Requires the session to be passed in for user context.
  */
 export async function tradeAction(formData: FormData) {
-  try {
-    const session = await auth();
-    const stockId = formData.get("stockId") as string;
-    const quantity = Number(formData.get("quantity")) as number;
-    const type = formData.get("type") as string;
-    console.log("Trade type received:", type);
+  const session = await auth();
+  const stockId = formData.get("stockId") as string;
+  const quantity = Number(formData.get("quantity")) as number;
+  const type = formData.get("type") as string;
+  console.log("Trade type received:", type);
 
-    if (!session?.user?.email) return { error: "Not authenticated." };
+  if (!session?.user?.email) return { error: "Not authenticated." };
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: { profile: { include: { Portfolio: true } } },
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: { profile: { include: { Portfolio: true } } },
+  });
+  if (!user || !user.profile?.Portfolio)
+    return { error: "User portfolio not found." };
+
+  const stock = await prisma.stock.findUnique({ where: { stockId } });
+  const portfolioId = user.profile.Portfolio.id;
+  const portfolioStock = await prisma.portfolioStock.findUnique({
+    where: { portfolioId_stockId: { portfolioId, stockId } },
+  });
+
+  const userCash = Number(user.profile.Portfolio.cash);
+  const stockPrice = Number(stock.currentPrice);
+  const totalCost = stockPrice * quantity;
+  const currentQuantity = portfolioStock ? portfolioStock.quantity : 0;
+  const newQuantity = currentQuantity + quantity;
+  const newTotalValue = stockPrice * newQuantity;
+
+  if (type === "BUY") {
+    if (userCash < totalCost) return { error: "Not enough cash available." };
+    if (stock.initialVolume < quantity)
+      return { error: "Not enough stock available." };
+
+    // Update stock volume
+    await prisma.stock.update({
+      where: { stockId },
+      data: { initialVolume: stock.initialVolume - quantity },
     });
-    if (!user || !user.profile?.Portfolio)
-      return { error: "User portfolio not found." };
 
-    const stock = await prisma.stock.findUnique({ where: { stockId } });
-    const portfolioId = user.profile.Portfolio.id;
-    const portfolioStock = await prisma.portfolioStock.findUnique({
-      where: { portfolioId_stockId: { portfolioId, stockId } },
-    });
-
-    const userCash = Number(user.profile.Portfolio.cash);
-    const stockPrice = Number(stock.currentPrice);
-    const totalCost = stockPrice * quantity;
-    const currentQuantity = portfolioStock ? portfolioStock.quantity : 0;
-    const newQuantity = currentQuantity + quantity;
-    const newTotalValue = stockPrice * newQuantity;
-
-    if (type === "BUY") {
-      if (userCash < totalCost) return { error: "Not enough cash available." };
-      if (stock.initialVolume < quantity)
-        return { error: "Not enough stock available." };
-
-      // Update stock volume
-      await prisma.stock.update({
-        where: { stockId },
-        data: { initialVolume: stock.initialVolume - quantity },
-      });
-
-      if (portfolioStock) {
-        await prisma.portfolioStock.update({
-          where: { id: portfolioStock.id },
-          data: {
-            quantity: newQuantity,
-            totalValue: newTotalValue,
-          },
-        });
-      } else {
-        await prisma.portfolioStock.create({
-          data: {
-            portfolioId,
-            stockId,
-            quantity,
-          },
-        });
-      }
-
-      // Deduct cash
-      await prisma.portfolio.update({
-        where: { id: portfolioId },
-        data: { cash: userCash - totalCost },
-      });
-    } else if (type === "SELL") {
-      if (!portfolioStock || portfolioStock.quantity < quantity)
-        return { error: "Not enough shares to sell." };
-
-      // Update stock volume
-      await prisma.stock.update({
-        where: { stockId },
-        data: { initialVolume: stock.initialVolume + quantity },
-      });
-
-      // Update portfolio stock
+    if (portfolioStock) {
       await prisma.portfolioStock.update({
         where: { id: portfolioStock.id },
-        data: { quantity: portfolioStock.quantity - quantity },
-      });
-
-      // Add cash
-      await prisma.portfolio.update({
-        where: { id: portfolioId },
-        data: { cash: userCash + stockPrice * quantity },
+        data: {
+          quantity: newQuantity,
+          totalValue: newTotalValue,
+        },
       });
     } else {
-      return { error: "Invalid trade type." };
+      await prisma.portfolioStock.create({
+        data: {
+          portfolioId,
+          stockId,
+          quantity,
+        },
+      });
     }
+
+    // Deduct cash
+    await prisma.portfolio.update({
+      where: { id: portfolioId },
+      data: { cash: userCash - totalCost },
+    });
+  }
+
+  if (type === "SELL") {
+    if (!portfolioStock || quantity > portfolioStock.quantity)
+      return { error: "Not enough shares to sell." };
+
+    // Update stock volume
+    await prisma.stock.update({
+      where: { stockId },
+      data: { initialVolume: stock.initialVolume + quantity },
+    });
+
+    // Update portfolio stock
+    await prisma.portfolioStock.update({
+      where: { id: portfolioStock.id },
+      data: { quantity: portfolioStock.quantity - quantity },
+    });
+
+    // Add cash
+    await prisma.portfolio.update({
+      where: { id: portfolioId },
+      data: { cash: userCash + stockPrice * quantity },
+    });
 
     await prisma.transaction.create({
       data: {
@@ -174,11 +172,8 @@ export async function tradeAction(formData: FormData) {
     });
 
     return { success: true };
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
-    return { error: errorMessage };
   }
+  return { success: true };
 }
 
 export async function getMarketData() {

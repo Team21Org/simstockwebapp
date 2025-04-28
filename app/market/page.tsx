@@ -3,7 +3,6 @@
 // Project: Stock Trading System Simulator
 // Display Create Stock Page
 import Head from "next/head";
-import Link from "next/link";
 import { auth } from "../../auth";
 import { getMarketData, randomizeStockPrices } from "../lib/actions";
 import { TradeForm } from "../lib/ui/tradeconfirm";
@@ -45,7 +44,20 @@ export default async function ViewMarket() {
       </div>
     );
   }
+  // Check if the market is open (not Sunday [0] or Saturday [6])
+  // const isMarketOpen = () => {
+  //   const day = new Date().getDay();
+  //   return day !== 0 && day !== 6;
+  // };
 
+  // if (!isMarketOpen()) {
+  //   return (
+  //     <div>
+  //       <h3>View Market</h3>
+  //       <p>The market is closed today. Please come back on a weekday.</p>
+  //     </div>
+  //   );
+  // }
   return (
     <>
       <Head>
@@ -70,7 +82,7 @@ export default async function ViewMarket() {
           <tbody>
             {stocks.map((stock) => {
               const held =
-                portfolio?.stocks?.find((p) => p.stockId === stock.stockId)
+                portfolio?.stocks.find((s) => s.stockId === stock.stockId)
                   ?.quantity || 0;
               return (
                 <tr key={stock.stockId}>
@@ -86,7 +98,8 @@ export default async function ViewMarket() {
                   <td>
                     <TradeForm
                       stockId={stock.stockId}
-                      maxQuantity={stock.initialVolume}
+                      maxBuyQuantity={stock.initialVolume}
+                      maxSellQuantity={held}
                     />
                   </td>
                 </tr>

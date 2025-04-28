@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export function TradeForm({ stockId, maxQuantity }) {
+export function TradeForm({ stockId, maxBuyQuantity, maxSellQuantity }) {
   const [loading, setLoading] = useState(false);
   const [tradeType, setTradeType] = useState("BUY");
 
@@ -9,7 +9,7 @@ export function TradeForm({ stockId, maxQuantity }) {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.target);
-    formData.set("type", tradeType); // Ensure type is included
+    formData.set("type", tradeType);
 
     const res = await fetch("/api/market", {
       method: "POST",
@@ -29,14 +29,7 @@ export function TradeForm({ stockId, maxQuantity }) {
   return (
     <form action="/api/market" method="POST" onSubmit={handleSubmit}>
       <input type="hidden" name="stockId" value={stockId} />
-      <input
-        type="number"
-        name="quantity"
-        min={1}
-        max={maxQuantity}
-        defaultValue={1}
-        required
-      />
+      <input type="number" name="quantity" min={1} defaultValue={1} required />
       <button
         type="submit"
         onClick={() => setTradeType("BUY")}
