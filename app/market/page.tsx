@@ -7,21 +7,41 @@ import Link from "next/link";
 import { auth } from "../../auth";
 import { getMarketData, randomizeStockPrices } from "../lib/actions";
 import { TradeForm } from "../lib/ui/tradeconfirm";
+import prisma from "../lib/prisma";
 
 export default async function ViewMarket() {
   const session = await auth();
 
   await randomizeStockPrices();
   const stocks = await getMarketData();
-  if (!session?.user?.email) {
+
+  // Fetch the user's profile using their email
+  const profile = await prisma.profile.findUnique({
+    where: { email: session?.user?.email },
+  });
+
+  // Use the profile's userId as the profileId for the portfolio
+  const portfolio = profile
+    ? await prisma.portfolio.findUnique({
+        where: { profileId: profile.userId },
+        include: {
+          stocks: {
+            include: {
+              stock: true,
+            },
+          },
+        },
+      })
+    : null;
+
+  if (!portfolio) {
     return (
-      <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow rounded">
-  
+      <div>
         <h3>View Market</h3>
-        <h1 className="text-xl font-bold mb-4">You must be logged in to view the Market.</h1>
-        <p id="redirectTxt">Please select either option below:</p>
-        <Link id="loginRedirect" href="/login">Click Here To Login!</Link> 
-        <Link id="signupRedirect" href="/signup">Make An Account!</Link>
+        <p>
+          You do not have a portfolio yet. Please contact support or try
+          re-registering.
+        </p>
       </div>
     );
   }
@@ -44,28 +64,34 @@ export default async function ViewMarket() {
               <th>Day High</th>
               <th>Day Low</th>
               <th>Price Change</th>
-              <th>Trade</th>
+              <th>Quantity Held by You</th>
             </tr>
           </thead>
           <tbody>
-            {stocks.map((stock) => (
-              <tr key={stock.stockId}>
-                <td>{stock.companyName}</td>
-                <td>{stock.ticker}</td>
-                <td>${stock.currentPrice.toFixed(2)}</td>
-                <td>{stock.initialVolume}</td>
-                <td>{Number(stock.openPrice)}</td>
-                <td>{Number(stock.dayHigh)}</td>
-                <td>{Number(stock.dayLow)}</td>
-                <td>{Number(stock.priceChange)}</td>
-                <td>
-                  <TradeForm
-                    stockId={stock.stockId}
-                    maxQuantity={stock.initialVolume}
-                  />
-                </td>
-              </tr>
-            ))}
+            {stocks.map((stock) => {
+              const held =
+                portfolio?.stocks?.find((p) => p.stockId === stock.stockId)
+                  ?.quantity || 0;
+              return (
+                <tr key={stock.stockId}>
+                  <td>{stock.companyName}</td>
+                  <td>{stock.ticker}</td>
+                  <td>${stock.currentPrice.toFixed(2)}</td>
+                  <td>{stock.initialVolume}</td>
+                  <td>{Number(stock.openPrice)}</td>
+                  <td>{Number(stock.dayHigh)}</td>
+                  <td>{Number(stock.dayLow)}</td>
+                  <td>{Number(stock.priceChange)}</td>
+                  <td>{held}</td>
+                  <td>
+                    <TradeForm
+                      stockId={stock.stockId}
+                      maxQuantity={stock.initialVolume}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

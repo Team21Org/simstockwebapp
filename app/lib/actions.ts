@@ -98,7 +98,8 @@ export async function tradeAction(formData: FormData) {
     const userCash = Number(user.profile.Portfolio.cash);
     const stockPrice = Number(stock.currentPrice);
     const totalCost = stockPrice * quantity;
-    const newQuantity = portfolioStock.quantity + quantity;
+    const currentQuantity = portfolioStock ? portfolioStock.quantity : 0;
+    const newQuantity = currentQuantity + quantity;
     const newTotalValue = stockPrice * newQuantity;
 
     if (type === "BUY") {
