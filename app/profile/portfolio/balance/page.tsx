@@ -16,31 +16,31 @@ export default async function AccountBalance() {
       </Head>
       <div>
         <h3>Balance</h3>
-        <p>Current Balance: ${Number(cash)}</p>
-        <p>What would you like to do?</p>
+        <h1 id="balTitle">Current Balance: ${Number(cash)}</h1>
+        <h1 id="balSub">Please Select From The Options Below</h1>
         <form action={updateCash}>
           <input
             type="radio"
-            id="withdraw"
+            id="balRadio"
             name="balance"
             value="withdraw"
             required
           />
-          <label htmlFor="withdraw">Withdraw</label>
+          <label id="balRadio" htmlFor="withdraw">Withdraw</label>
           <br />
           <input
             type="radio"
-            id="deposit"
+            id="balRadio"
             name="balance"
             value="deposit"
             required
           />
-          <label htmlFor="deposit">Deposit</label>
+          <label id="balRadio" htmlFor="deposit">Deposit</label>
           <br />
-          <p>Amount: </p>
-          <input type="number" id="amount" name="amount" min="1" required />
+          <h1 id="balSub2">Amount </h1>
+          <input id="amtInput" type="number" name="amount" min="1" placeholder="$" required />
           <br />
-          <input className="btn" type="submit" value="Submit" />
+          <input id="balBtn" type="submit" value="SUBMIT" />
         </form>
       </div>
     </>
