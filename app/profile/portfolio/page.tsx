@@ -64,8 +64,8 @@ export default async function Portfolio() {
                 <th>Stock Name</th>
                 <th>Ticker</th>
                 <th>Quantity Owned</th>
-                <th>Purchased Price</th>
-                <th>Current Price</th>
+                <th>Current Market Price</th>
+                <th>Current Value</th>
               </tr>
             </thead>
             <tbody>
@@ -75,6 +75,12 @@ export default async function Portfolio() {
                   <td>{stock.stock.ticker}</td>
                   <td>{stock.quantity}</td>
                   <td>${stock.stock.currentPrice.toFixed(2)}</td>
+                  <td>
+                    $
+                    {(
+                      stock.quantity * Number(stock.stock.currentPrice)
+                    ).toFixed(2)}
+                  </td>
                 </tr>
               ))}
             </tbody>
