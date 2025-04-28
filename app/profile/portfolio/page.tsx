@@ -58,7 +58,8 @@ export default async function Portfolio() {
         </Head>
         <div>
           <h3>Portfolio</h3>
-          <table>
+          <h1 id="portTitle"> Welcome To Your Portfolio {user.name} </h1>
+          <table id="portTable">
             <thead>
               <tr>
                 <th>Stock Name</th>
@@ -86,8 +87,9 @@ export default async function Portfolio() {
             </tbody>
           </table>
           <br />
-          <h3>Transaction History</h3>
-          <table>
+          <h1 id="portTitle3">Current Balance On Account: ${accountBalance.toFixed(2)} <Link id="portBal" href="./portfolio/balance"> Deposit/Withdraw </Link></h1>
+          <h1 id="portTitle2" >Transaction History</h1>
+          <table id="portTable">
             <thead>
               <tr>
                 <th>Transaction Type</th>
@@ -111,15 +113,6 @@ export default async function Portfolio() {
               ))}
             </tbody>
           </table>
-          <br />
-          <h3>Balance</h3>
-          <p>Current Balance:</p>
-          <p>${accountBalance.toFixed(2)}</p>
-          <div>
-            <Link className="btn" href="./portfolio/balance">
-              Access Balance
-            </Link>
-          </div>
         </div>
       </>
     );
